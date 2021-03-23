@@ -1,3 +1,5 @@
+package SolverCode;
+import CommonCode.BoardObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ public class CreateBoard {
     //create the board object blueprint
     //assigning the multiplier to each board object and see the asci value
 
-    BoardObject board[][];
+    public BoardObject board[][];
 
     public void create() throws FileNotFoundException {
 
@@ -69,9 +71,6 @@ public class CreateBoard {
         line = scnr.nextLine();
         tray = line.toCharArray();
     }
-
-
-
 
 }
 

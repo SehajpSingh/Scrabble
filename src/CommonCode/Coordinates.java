@@ -1,3 +1,5 @@
+package CommonCode;
+
 import java.util.HashSet;
 
 public class Coordinates {

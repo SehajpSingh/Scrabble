@@ -1,4 +1,4 @@
-import java.util.Arrays;
+package CommonCode;
 
 
 public class Dictionary {

@@ -1,12 +1,19 @@
+package CommonCode;
+
+import CommonCode.TileObject;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class createTile {
-    TileObject tile[] = new TileObject[27];
 
+    public TileObject tile[] = new TileObject[27];
 
-    protected void tiles() throws FileNotFoundException {
+    public ArrayList<Character> tray = new ArrayList<Character>();
+
+    public void tiles() throws FileNotFoundException {
         int tileIndex = 0;
         File file = new File("/Users/sehajpunitsingh/Desktop/tiles.txt");
         Scanner scnr = new Scanner(file);
@@ -31,7 +38,20 @@ public class createTile {
             //lineNumber++;
 
         }
-
         
+    }
+
+    public void trays() {
+        int size = tray.size();
+        for (int i = size; i < 7; i++) {
+            Random rand = new Random();
+            int rand_int1 = rand.nextInt(27);
+            if (tile[rand_int1].getFrequency() >= 1) {
+                System.out.println("the ascii is"+rand_int1);
+                tray.add(tile[rand_int1].getLetter());
+                tile[rand_int1].withdrawLetter();
+            }
+        }
+
     }
 }

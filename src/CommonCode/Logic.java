@@ -1,4 +1,8 @@
-import jdk.swing.interop.SwingInterOpUtils;
+package CommonCode;
+
+import CommonCode.DictionaryEdit;
+import CommonCode.createTile;
+import SolverCode.CreateBoard;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,7 +14,7 @@ public class Logic {
     createTile tile;
     ReadFile readFile;
 
-    protected Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file)
+    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file)
     {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
@@ -20,7 +24,7 @@ public class Logic {
 
     ArrayList<Coordinates> ankers = new ArrayList<>();
 
-    protected void printBoard() {
+    public void printBoard() {
         int loop = createBoard.board.length;
 
         for (int i = 0; i < loop; i++) {
@@ -151,7 +155,7 @@ public class Logic {
 
     private HashSet<String> prefixes = new HashSet<String>();
     private HashSet<String> allPrefix = new HashSet<String>();
-    protected void findPrefix(){
+    public void findPrefix(){
         combination("","asdt");
 
         Iterator value = prefixes.iterator();

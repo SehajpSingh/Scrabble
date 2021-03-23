@@ -1,3 +1,5 @@
+package CommonCode;
+
 public class TileObject {
     private char letter;
     private int multiplier;
@@ -8,9 +10,9 @@ public class TileObject {
         this.multiplier = mult;
         this.frequency = freq;
 
-
     }
-    protected boolean withdrawLetter(){
+
+    public boolean withdrawLetter(){
         if(this.frequency>0){
             frequency--;
             return true;
@@ -18,8 +20,7 @@ public class TileObject {
         return false;
     }
 
-
-    protected char getLetter() {
+    public char getLetter() {
         return this.letter;
     }
 
@@ -27,7 +28,13 @@ public class TileObject {
         return this.multiplier;
     }
 
-    protected int getFrequency() {
+    public int getFrequency() {
         return this.frequency;
     }
+
+    public void incrementFreq(){
+        this.frequency++;
+    }
+
+
 }

@@ -1,29 +1,32 @@
+package CommonCode;
+
 public class BoardObject {
     private int word_Mult;
     private int letter_mult;
     private boolean played;
     private char letter;
 
-    protected BoardObject(int word_Mult, int letter_mult, char letter, boolean played) {
+    public BoardObject(int word_Mult, int letter_mult, char letter, boolean played) {
         this.played = played;
         this.word_Mult = word_Mult;
         this.letter_mult = letter_mult;
         this.letter = letter;
     }
 
-    protected char getLetter(){
+    public char getLetter(){
         return this.letter;
     }
 
-    protected int getWordMult() {
+    public int getWordMult() {
         return this.word_Mult;
     }
 
-    protected int getLetterMult() {
+    public int getLetterMult() {
         return this.letter_mult;
     }
 
-    protected boolean getPlayedStatus() {
+    public boolean getPlayedStatus() {
         return this.played;
     }
 }
+

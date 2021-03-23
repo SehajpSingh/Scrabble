@@ -1,3 +1,7 @@
+package CommonCode;
+
+import CommonCode.Dictionary;
+
 import java.util.ArrayList;
 
 public class DictionaryEdit {

@@ -1,10 +1,15 @@
+package CommonCode;
+
+import CommonCode.Dictionary;
+import CommonCode.DictionaryEdit;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ReadFile {
 
-   protected DictionaryEdit dictEdit = new DictionaryEdit();
+   public DictionaryEdit dictEdit = new DictionaryEdit();
     private Dictionary root = new Dictionary();
 
 
