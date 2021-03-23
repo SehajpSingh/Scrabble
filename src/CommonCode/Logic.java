@@ -12,6 +12,8 @@ public class Logic {
     private ReadFile readFile;
     private HashSet<String> prefixes = new HashSet<String>();
     private HashSet<String> allPrefix = new HashSet<String>();
+    private HashSet<String> suffixFromTray = new HashSet<String>();
+    private HashSet<String> prefixBoardSuffixTray = new HashSet<String>();
     private ArrayList<Coordinates> ankers = new ArrayList<>();
 
     public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file) {
@@ -147,7 +149,7 @@ public class Logic {
     }
 
     public void findPrefixfromTray(){
-        String tray = "lemare";
+        String tray = "dgos*ie";
         int countWild = 0;
         boolean asterik = false;
         for (int i = 0; i < tray.length(); i++) {
@@ -235,7 +237,7 @@ public class Logic {
                               }
                           } else if (createBoard.board[row][currentCol + 1].getPlayedStatus() == true && j == prefix.length() - 1) {
                               boolean rand1 = true;
-                              System.out.println("hello world");
+
 
                               while (rand1) {
                                   if (currentCol <= createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
@@ -252,13 +254,60 @@ public class Logic {
                       }
 
                       if (dictionaryEdit.isWord(prefix + strSufix, readFile.getRoot())) {
-                          System.out.println("foundword  " + prefix + " " + strSufix);
+                          //if((prefix+strSufix).equals("bodgiest"))
+                          //System.out.println("foundword  " + prefix + " " + strSufix);
                       }
                   }
 
 
               }
           }
+        }
+    }
+
+    public void getPrefixFromBoard(){
+        for(int i=0; i < ankers.size(); i++){
+            int col = ankers.get(i).getCol();
+            int row = ankers.get(i).getRow();
+
+            if(col-1 >= 0 && createBoard.board[row][col-1].getPlayedStatus()==true){
+                boolean rand = true;
+                String strPrefix = "";
+                while (rand) {
+                    //may be row and column are switched
+                    if (col >= 1 && createBoard.board[row][col-1].getPlayedStatus() == true) {
+                        strPrefix = createBoard.board[row][col-1].getLetter() + strPrefix;
+                        col--;
+
+                    } else{
+                        rand = false;
+                    }
+                }
+                System.out.println("prefix from board "+strPrefix);
+                Iterator value = prefixes.iterator();
+                while (value.hasNext()) {
+                    permutationfromTray(strPrefix, (String) value.next());
+                }
+            }
+        }
+    }
+
+
+    private void permutationfromTray(String prefix, String s) {
+        int N = s.length();
+        if (N == 0) {
+            if (dictionaryEdit.isWord(prefix, readFile.getRoot())){
+                prefixBoardSuffixTray.add(prefix);
+                //System.out.println("1 here is :"+prefix);
+            }
+        }
+
+        for(int i = 0; i < N; i++){
+            boolean ran = dictionaryEdit.isPrefix(prefix, readFile.getRoot()) && prefix.length()>0;
+
+            if (ran || prefix.length() == 0) {
+                permutationfromTray( prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
+            }
         }
     }
 }

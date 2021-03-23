@@ -35,5 +35,6 @@ public class main {
 
         logic.findPrefixfromTray();
         logic.getSuffixFromBoard();
+        logic.getPrefixFromBoard();
     }
 }
