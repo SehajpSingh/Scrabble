@@ -17,6 +17,10 @@ public class BoardObject {
         return this.letter;
     }
 
+    public void setLetter(char letter) {
+        this.letter = letter;
+    }
+
     public int getWordMult() {
         return this.word_Mult;
     }

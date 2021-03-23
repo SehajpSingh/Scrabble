@@ -1,28 +1,25 @@
 package CommonCode;
-
-import CommonCode.DictionaryEdit;
-import CommonCode.createTile;
 import SolverCode.CreateBoard;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class Logic {
-    DictionaryEdit dictionaryEdit;
-    CreateBoard createBoard;
-    createTile tile;
-    ReadFile readFile;
+    private DictionaryEdit dictionaryEdit;
+    private CreateBoard createBoard;
+    private createTile tile;
+    private ReadFile readFile;
+    private HashSet<String> prefixes = new HashSet<String>();
+    private HashSet<String> allPrefix = new HashSet<String>();
+    private ArrayList<Coordinates> ankers = new ArrayList<>();
 
-    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file)
-    {
+    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file) {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
         this.tile = tile;
         this.readFile = file;
     }
-
-    ArrayList<Coordinates> ankers = new ArrayList<>();
 
     public void printBoard() {
         int loop = createBoard.board.length;
@@ -50,10 +47,6 @@ public class Logic {
         //delete these
         ankerPoints();
         storeCrossChecks();
-    }
-
-    private void compMove() {
-        //this method can be used for both computer and puzzle solver
     }
 
     private void ankerPoints() {
@@ -117,7 +110,7 @@ public class Logic {
 
             row = ankers.get(i).getRow();
             if(strPrefix.length()+strSufix.length()==0) {
-                 ankers.get(i).addChar('0');
+                ankers.get(i).addChar('0');
 
             }else if(strPrefix.length()>0 && strSufix.length()==0){
                 for(int k = 0; k < 26; k++){
@@ -139,34 +132,54 @@ public class Logic {
                     }
                 }
             }else if(strPrefix.length()> 0 && strSufix.length()>0){
-                    for(int k = 0; k < 26; k++){
-                        int ascii = 'a'+k;
-                        String temp =  strPrefix+(char) ascii+strSufix;
+                for(int k = 0; k < 26; k++){
+                    int ascii = 'a'+k;
+                    String temp =  strPrefix+(char) ascii+strSufix;
 
-                        if(dictionaryEdit.isWord(temp, readFile.getRoot())){
-                            ankers.get(i).addChar((char) ascii);
-                            //System.out.println("VALID WORD "+temp);
-                        }
+                    if(dictionaryEdit.isWord(temp, readFile.getRoot())){
+                        ankers.get(i).addChar((char) ascii);
+                        //System.out.println("VALID WORD "+temp);
                     }
+                }
             }
 
         }
     }
 
-    private HashSet<String> prefixes = new HashSet<String>();
-    private HashSet<String> allPrefix = new HashSet<String>();
-    public void findPrefix(){
-        combination("","asdt");
+    public void findPrefixfromTray(){
+        String tray = "lemare";
+        int countWild = 0;
+        boolean asterik = false;
+        for (int i = 0; i < tray.length(); i++) {
+            if (tray.charAt(i) == '*') {
+                countWild++;
 
+                asterik = true;
+            }
+        }
+        tray = tray.replaceAll("\\*", "");
+        if (countWild == 1){
+            for (int i = 0; i < 26; i++){
+                String str1 = tray + (char) ('a' + i);
+                combination("", str1);
+            }
+        } else if (countWild == 2){
+            for (int i = 0; i < 26; i++){
+                for(int j = 0; j <26; j++){
+                    String str1 = tray + (char) ('a' + i) + (char) ('a' + j);
+                    combination("", str1);
+                }
+            }
+        } else {
+            combination("", tray);
+        }
         Iterator value = prefixes.iterator();
         while (value.hasNext()) {
             permutation("", (String) value.next());
         }
         Iterator val = allPrefix.iterator();
+        System.out.println("this is combination "+ allPrefix.size());
 
-        while (val.hasNext()) {
-            System.out.println(val.next());
-        }
     }
 
     private void combination(String prefix, String s){
@@ -179,33 +192,73 @@ public class Logic {
 
     private void permutation(String prefix, String s) {
         int N = s.length();
-
         if (N == 0) {
-            allPrefix.add(prefix);
+            if (dictionaryEdit.isPrefix(prefix, readFile.getRoot())){
+                allPrefix.add(prefix);
+                //System.out.println("here is :"+prefix);
+            }
         }
 
         for(int i = 0; i < N; i++){
-            boolean ran = dictionaryEdit.isPrefix(prefix, dictionaryEdit.tree);
-            System.out.println("this is the boolean: "+ran);
-            System.out.println("this is the prefix: "+prefix);
+            boolean ran = dictionaryEdit.isPrefix(prefix, readFile.getRoot()) && prefix.length()>0;
 
-            if (ran) {
-            System.out.println("this one: "+prefix);
+            if (ran || prefix.length() == 0) {
                 permutation(prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
             }
         }
     }
 
+    public void getSuffixFromBoard(){
+        //1. make sure the left of anker is empty
 
-    private void tradeTiles() {
-        //trading tiles means loosing turn
+        for(int i = 0; i < ankers.size(); i++){
+          int col = ankers.get(i).getCol();
+          int row = ankers.get(i).getRow();
+          System.out.println("this is row: " + row + " col: " + col);
+
+          if((col > 0 && !(createBoard.board[row][col-1].getPlayedStatus())) || col==0){
+
+              Iterator value = allPrefix.iterator();
+              while (value.hasNext()) {
+                  String prefix = (String) value.next();
+                  int currentCol = col;
+                  String strSufix = "";
+                  int leftMostLetter = col-prefix.length()+1;
+                  for(int k = 0; k< prefix.length();k++) {
+                      currentCol = leftMostLetter+k;
+
+                      for (int j = 0; j < prefix.length() && currentCol + 1 < createBoard.board.length && currentCol > 0; j++) {
+                          if (createBoard.board[row][currentCol + 1].getPlayedStatus() == false) {
+                              currentCol++;
+                              if (currentCol >= createBoard.board.length) {
+                                  break;
+                              }
+                          } else if (createBoard.board[row][currentCol + 1].getPlayedStatus() == true && j == prefix.length() - 1) {
+                              boolean rand1 = true;
+                              System.out.println("hello world");
+
+                              while (rand1) {
+                                  if (currentCol <= createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
+                                      strSufix = strSufix + createBoard.board[row][currentCol + 1].getLetter();
+                                      currentCol++;
+                                  } else {
+                                      rand1 = false;
+                                  }
+                              }
+                              //System.out.println("foundword    "+prefix+" "+strSufix);
+                          } else {
+                              break;
+                          }
+                      }
+
+                      if (dictionaryEdit.isWord(prefix + strSufix, readFile.getRoot())) {
+                          System.out.println("foundword  " + prefix + " " + strSufix);
+                      }
+                  }
+
+
+              }
+          }
+        }
     }
-
-    private void legalMove() {}
-
-    private void detectingWin() {}
-
-    private void gameOver() {}
-
-
 }

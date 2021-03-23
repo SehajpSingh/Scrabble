@@ -17,7 +17,6 @@ public class CreateGUIBoard {
     String size = arr[0];
     int boardSize = Integer.parseInt(size);
     BoardObject[][] board = new BoardObject[boardSize][boardSize];
-    //private String tray[];
 
     public CreateGUIBoard() throws FileNotFoundException {
     }
@@ -27,6 +26,7 @@ public class CreateGUIBoard {
     }
 
     protected void readBoard() {
+
         for (int i = 0; i < boardSize; i++) {
             line = scnr.nextLine();
             arr = line.split(" ");
@@ -37,11 +37,10 @@ public class CreateGUIBoard {
                     board[i][j] = new BoardObject(0,0,'0',false);
 
                 }else if(arr[j].charAt(0) == '.'){
-                    board[i][j] = new BoardObject(Integer.parseInt(String.valueOf(arr[j].charAt(1))),0,'0',false);
+                    board[i][j] = new BoardObject(0,Integer.parseInt(String.valueOf(arr[j].charAt(1))),'0',false);
 
                 }else{
-                    board[i][j] = new BoardObject(0, Integer.parseInt(String.valueOf(arr[j].charAt(0))) ,'0',false);
-
+                    board[i][j] = new BoardObject(Integer.parseInt(String.valueOf(arr[j].charAt(0))),0 ,'0',false);
 
                 }
                 //board[i][j] = new BoardObject()

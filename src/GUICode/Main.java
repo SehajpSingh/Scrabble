@@ -1,4 +1,5 @@
 package GUICode;
+
 import CommonCode.createTile;
 
 import javafx.application.Application;
@@ -34,12 +35,15 @@ public class Main extends Application {
     private static CreateGUIBoard boards;
     private Rectangle scoreBoard;
     private boolean swap;
+    private boolean tileClicked;
 
-    Label label;
-    Label name1;
-    Label humScor;
-    Label comScor;
-    Label trayLetter;
+    private Label label;
+    private Label name1;
+    private Label humScor;
+    private Label comScor;
+    private Label trayLetter;
+
+
 
     protected static createTile tile;
 
@@ -164,6 +168,14 @@ public class Main extends Application {
                         int tile = Integer.valueOf(temp);
                         int x = tile / size;
                         int y = tile % size;
+
+                        if((tileClicked) && (boards.board[x][y].getPlayedStatus() == false)){
+                            tileClicked = false;
+
+                           // boards.board[x][y].setLetter();
+                            System.out.println("this is letter mult: "+boards.board[x][y].getLetterMult()+" this is word mult: "+boards.board[x][y].getWordMult());
+                            System.out.println("yes it is false");
+                        }
                         System.out.println("this is x: " + x + " this is y: " + y);
                     }
                 });
@@ -241,7 +253,6 @@ public class Main extends Application {
                             tileLetter.get(val).setLayoutY(labelY + 40);
                             swapLetters.remove(Integer.valueOf(num));
                         } else {
-                            //System.out.println("in swap");
                             int val = Integer.valueOf(num);
                             int y = (int) (tiles.get(val).getY());
                             tiles.get(val).setY(y - 40);
@@ -250,6 +261,11 @@ public class Main extends Application {
                             tileLetter.get(val).setLayoutY(labelY - 40);
                             swapLetters.add(Integer.valueOf(num));
                         }
+                    } else {
+                        int val = Integer.valueOf(num);
+                        tileClicked = true;
+                        tiles.get(val).setFill(Color.LIGHTSLATEGREY);
+
                     }
                 }
             });
@@ -264,7 +280,6 @@ public class Main extends Application {
             trayLetter.setLayoutX(x + 20);
             trayLetter.setLayoutY(y + 20);
             tileLetter.add(trayLetter);
-
 
             tiles.add(rect);
             x = x + 50;
@@ -331,7 +346,6 @@ public class Main extends Application {
 
         swapLetters.clear();
     }
-
 
     private void scoreBoard() {
         int humanScore = 50;

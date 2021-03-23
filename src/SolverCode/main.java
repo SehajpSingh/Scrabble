@@ -33,6 +33,7 @@ public class main {
         //System.out.println("this onesssss "+read.dictEdit.isPrefix("tad", read.getRoot()));
         //System.out.println("this onesssss "+read.dictEdit.isPrefix("dt", read.getRoot()));
 
-        logic.findPrefix();
+        logic.findPrefixfromTray();
+        logic.getSuffixFromBoard();
     }
 }
