@@ -1,5 +1,8 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Logic {
     DictionaryEdit dictionaryEdit;
@@ -70,9 +73,9 @@ public class Logic {
             }
         }
 
-        for (int i = 0; i < ankers.size(); i++) {
-            System.out.println(ankers.get(i).getRow()+" "+ ankers.get(i).getCol());
-        }
+//        for (int i = 0; i < ankers.size(); i++) {
+//            System.out.println(ankers.get(i).getRow()+" "+ ankers.get(i).getCol());
+//        }
 
     }
 
@@ -96,12 +99,10 @@ public class Logic {
                     rand = false;
                 }
             }
-            //System.out.println(row + " " + col +" pre :"+strPrefix);
             row = ankers.get(i).getRow();
             boolean rand1 = true;
 
             while (rand1) {
-                //may be row and column are switched
                 if (row <= createBoard.board.length && createBoard.board[row + 1][col].getPlayedStatus() == true) {
                     strSufix = strSufix+createBoard.board[row + 1][col].getLetter() ;
                     row++;
@@ -109,7 +110,7 @@ public class Logic {
                     rand1 = false;
                 }
             }
-            System.out.println(row + " " + col +" suff :"+strSufix);
+
             row = ankers.get(i).getRow();
             if(strPrefix.length()+strSufix.length()==0) {
                  ankers.get(i).addChar('0');
@@ -121,7 +122,6 @@ public class Logic {
 
                     if(dictionaryEdit.isWord(temp, readFile.getRoot())){
                         ankers.get(i).addChar((char) ascii);
-                        //System.out.println("VALID WORD "+temp);
                     }
                 }
             }else if(strPrefix.length()==0 && strSufix.length()>0){
@@ -131,7 +131,7 @@ public class Logic {
 
                     if(dictionaryEdit.isWord(temp, readFile.getRoot())){
                         ankers.get(i).addChar((char) ascii);
-                        System.out.println("VALID WORD "+temp);
+                        //System.out.println("VALID WORD "+temp);
                     }
                 }
             }else if(strPrefix.length()> 0 && strSufix.length()>0){
@@ -141,31 +141,67 @@ public class Logic {
 
                         if(dictionaryEdit.isWord(temp, readFile.getRoot())){
                             ankers.get(i).addChar((char) ascii);
-                            System.out.println("VALID WORD "+temp);
+                            //System.out.println("VALID WORD "+temp);
                         }
                     }
             }
 
         }
-
     }
+
+    private HashSet<String> prefixes = new HashSet<String>();
+    private HashSet<String> allPrefix = new HashSet<String>();
+    protected void findPrefix(){
+        combination("","asdt");
+
+        Iterator value = prefixes.iterator();
+        while (value.hasNext()) {
+            permutation("", (String) value.next());
+        }
+        Iterator val = allPrefix.iterator();
+
+        while (val.hasNext()) {
+            System.out.println(val.next());
+        }
+    }
+
+    private void combination(String prefix, String s){
+        int N = s.length();
+        prefixes.add(prefix);
+
+        for (int i = 0 ; i < N ; i++)
+            combination(prefix + s.charAt(i), s.substring(i+1));
+    }
+
+    private void permutation(String prefix, String s) {
+        int N = s.length();
+
+        if (N == 0) {
+            allPrefix.add(prefix);
+        }
+
+        for(int i = 0; i < N; i++){
+            boolean ran = dictionaryEdit.isPrefix(prefix, dictionaryEdit.tree);
+            System.out.println("this is the boolean: "+ran);
+            System.out.println("this is the prefix: "+prefix);
+
+            if (ran) {
+            System.out.println("this one: "+prefix);
+                permutation(prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
+            }
+        }
+    }
+
 
     private void tradeTiles() {
         //trading tiles means loosing turn
     }
 
-    private void legalMove() {
+    private void legalMove() {}
 
-    }
+    private void detectingWin() {}
 
-
-    private void detectingWin() {
-        //this function detects win
-    }
-
-    private void gameOver() {
-
-    }
+    private void gameOver() {}
 
 
 }
