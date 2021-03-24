@@ -3,7 +3,6 @@ import SolverCode.CreateBoard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 
 public class Logic {
     private DictionaryEdit dictionaryEdit;
@@ -13,8 +12,12 @@ public class Logic {
     private HashSet<String> prefixes = new HashSet<String>();
     private HashSet<String> allPrefix = new HashSet<String>();
     private HashSet<String> suffixFromTray = new HashSet<String>();
+    private HashSet<String> suffixFromBoardTray = new HashSet<String>();
     private HashSet<String> prefixBoardSuffixTray = new HashSet<String>();
+    private HashSet<String> wordBoardTray = new HashSet<String>();
     private ArrayList<Coordinates> ankers = new ArrayList<>();
+    private String tray;
+    private String trayNoWild;
 
     public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file) {
         this.dictionaryEdit = dictionaryEdit;
@@ -149,7 +152,7 @@ public class Logic {
     }
 
     public void findPrefixfromTray(){
-        String tray = "dgos*ie";
+      tray = "ntntoi";
         int countWild = 0;
         boolean asterik = false;
         for (int i = 0; i < tray.length(); i++) {
@@ -160,15 +163,18 @@ public class Logic {
             }
         }
         tray = tray.replaceAll("\\*", "");
+        trayNoWild = tray;
         if (countWild == 1){
             for (int i = 0; i < 26; i++){
                 String str1 = tray + (char) ('a' + i);
+                trayNoWild = str1;
                 combination("", str1);
             }
         } else if (countWild == 2){
             for (int i = 0; i < 26; i++){
                 for(int j = 0; j <26; j++){
                     String str1 = tray + (char) ('a' + i) + (char) ('a' + j);
+                    trayNoWild = str1;
                     combination("", str1);
                 }
             }
@@ -190,6 +196,15 @@ public class Logic {
 
         for (int i = 0 ; i < N ; i++)
             combination(prefix + s.charAt(i), s.substring(i+1));
+    }
+
+    private void combination1(String prefix, String s){
+        int N = s.length();
+        System.out.println("combinationPrefix: "+prefix);
+        suffixFromBoardTray.add(prefix);
+
+        for (int i = 0 ; i < N ; i++)
+            combination1(prefix + s.charAt(i), s.substring(i+1));
     }
 
     private void permutation(String prefix, String s) {
@@ -216,7 +231,7 @@ public class Logic {
         for(int i = 0; i < ankers.size(); i++){
           int col = ankers.get(i).getCol();
           int row = ankers.get(i).getRow();
-          System.out.println("this is row: " + row + " col: " + col);
+
 
           if((col > 0 && !(createBoard.board[row][col-1].getPlayedStatus())) || col==0){
 
@@ -240,10 +255,30 @@ public class Logic {
 
 
                               while (rand1) {
-                                  if (currentCol <= createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
+                                  if (currentCol < createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
                                       strSufix = strSufix + createBoard.board[row][currentCol + 1].getLetter();
                                       currentCol++;
-                                  } else {
+                                  } else if(currentCol < createBoard.board.length){
+                                      String leftOver = trayNoWild;
+                                      for(int a = 0; a<prefix.length(); a++){
+                                          leftOver = leftOver.replaceFirst(""+prefix.charAt(a),"");
+
+                                      }
+                                      //System.out.println("used = "+prefix+" leftover= "+leftOver+" "+(prefix.length()+leftOver.length()));
+                                      if(leftOver.length()>0) {
+
+                                          combination1("", leftOver);
+                                          Iterator value1 = suffixFromBoardTray.iterator();
+
+                                          while (value1.hasNext()) {
+                                              String test = (String) value1.next();
+                                              System.out.println("leftOverPerm "+test+"     usedLetters:  "+prefix +" " +strSufix);
+                                              permutationfromTray(prefix + strSufix, test);
+                                          }
+                                          suffixFromBoardTray.clear();
+
+
+                                      }
                                       rand1 = false;
                                   }
                               }
@@ -283,7 +318,7 @@ public class Logic {
                         rand = false;
                     }
                 }
-                System.out.println("prefix from board "+strPrefix);
+                //System.out.println("prefix from board "+strPrefix);
                 Iterator value = prefixes.iterator();
                 while (value.hasNext()) {
                     permutationfromTray(strPrefix, (String) value.next());
@@ -292,13 +327,12 @@ public class Logic {
         }
     }
 
-
     private void permutationfromTray(String prefix, String s) {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())){
                 prefixBoardSuffixTray.add(prefix);
-                //System.out.println("1 here is :"+prefix);
+                System.out.println("1 here is : "+prefix);
             }
         }
 
@@ -309,5 +343,13 @@ public class Logic {
                 permutationfromTray( prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
             }
         }
+    }
+
+    private void Score(){
+
+    }
+
+    protected void clearAllSets(){
+
     }
 }

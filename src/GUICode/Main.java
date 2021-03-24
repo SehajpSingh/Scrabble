@@ -42,8 +42,7 @@ public class Main extends Application {
     private Label humScor;
     private Label comScor;
     private Label trayLetter;
-
-
+    private String tileText;
 
     protected static createTile tile;
 
@@ -169,12 +168,17 @@ public class Main extends Application {
                         int x = tile / size;
                         int y = tile % size;
 
-                        if((tileClicked) && (boards.board[x][y].getPlayedStatus() == false)){
+                        if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false)) {
                             tileClicked = false;
 
-                           // boards.board[x][y].setLetter();
-                            System.out.println("this is letter mult: "+boards.board[x][y].getLetterMult()+" this is word mult: "+boards.board[x][y].getWordMult());
+                            System.out.println("this is letter mult: " + boards.board[x][y].getLetterMult() + " this is word mult: " + boards.board[x][y].getWordMult());
                             System.out.println("yes it is false");
+                            boards.board[x][y].setLetter(tileText.charAt(0));
+                            System.out.println("THIS IS THE SIZE: "+labels.size());
+
+                            //fix this line indices are not working properly
+                            labels.get(((x+1)*(x+1))*(15-y)-1).setText(tileText);
+                            //labels.get(0).setText("g");
                         }
                         System.out.println("this is x: " + x + " this is y: " + y);
                     }
@@ -195,7 +199,6 @@ public class Main extends Application {
                     name1 = new Label();
 
                     int name2 = boards.board[i][j].getLetterMult();
-                    //System.out.println("this is string value: "+name2);
 
                     String names = String.valueOf(name2);
                     name1.setText(names);
@@ -229,6 +232,14 @@ public class Main extends Application {
         int x = 500;
         int y = 850;
         for (int i = 0; i < 7; i++) {
+            trayLetter = new Label();
+            String name2 = String.valueOf(tile.tray.get(i));
+            trayLetter.setText(name2);
+            trayLetter.setTextFill(Color.YELLOW);
+            trayLetter.setLayoutX(x + 20);
+            trayLetter.setLayoutY(y + 20);
+            tileLetter.add(trayLetter);
+
             Rectangle rect = new Rectangle();
             rect.setX(x);
             rect.setY(y);
@@ -236,7 +247,6 @@ public class Main extends Application {
             rect.setWidth(40);
             rect.setFill(Color.RED);
             rect.setAccessibleHelp(Integer.toString(i));
-
 
             rect.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                 @Override
@@ -264,22 +274,14 @@ public class Main extends Application {
                     } else {
                         int val = Integer.valueOf(num);
                         tileClicked = true;
+                        tileText = tileLetter.get(val).getText();
+                        System.out.println(tileLetter.get(val).getText()+ " :this is the text");
                         tiles.get(val).setFill(Color.LIGHTSLATEGREY);
-
                     }
                 }
             });
 
-            trayLetter = new Label();
 
-            //throws object out of bounds exception sometimes
-            String name2 = String.valueOf(tile.tray.get(i));
-
-            trayLetter.setText(name2);
-            trayLetter.setTextFill(Color.YELLOW);
-            trayLetter.setLayoutX(x + 20);
-            trayLetter.setLayoutY(y + 20);
-            tileLetter.add(trayLetter);
 
             tiles.add(rect);
             x = x + 50;
