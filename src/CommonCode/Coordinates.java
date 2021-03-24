@@ -25,4 +25,8 @@ public class Coordinates {
     public int getCol() {
         return col;
     }
+
+    public HashSet<Character> getSet() {
+        return set;
+    }
 }
