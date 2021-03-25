@@ -18,6 +18,8 @@ public class Logic {
     private HashSet<String> prefixBoardSuffixTray = new HashSet<String>();
     private HashSet<String> wordBoardTray = new HashSet<String>();
     private ArrayList<Coordinates> ankers = new ArrayList<>();
+     Object [][] storeRefs;
+
     private String tray;
     private String trayNoWild;
 
@@ -26,6 +28,7 @@ public class Logic {
         this.createBoard = createBoard;
         this.tile = tile;
         this.readFile = file;
+        storeRefs = new Object[createBoard.board.length][createBoard.board.length];
     }
 
     public void printBoard() {
@@ -64,13 +67,23 @@ public class Logic {
                 if (createBoard.board[i][j].getPlayedStatus() == false) {
 
                     if (j + 1 <= loop - 1 && createBoard.board[i][j + 1].getPlayedStatus() == true) {
-                        ankers.add(new Coordinates(i, j));
+                        Coordinates temp = new Coordinates(i,j);
+                        storeRefs[i][j] = (Object)temp;
+                        ankers.add(temp);
+
+                       // System.out.println("the refs are: "+temp1.getRow());
                     } else if (j - 1 >= 0 && createBoard.board[i][j - 1].getPlayedStatus() == true) {
-                        ankers.add(new Coordinates(i, j));
+                        Coordinates temp = new Coordinates(i,j);
+                        ankers.add(temp);
+                        storeRefs[i][j] = (Object)temp;
                     } else if (i + 1 <= loop - 1 && createBoard.board[i + 1][j].getPlayedStatus() == true) {
-                        ankers.add(new Coordinates(i, j));
+                        Coordinates temp = new Coordinates(i,j);
+                        ankers.add(temp);
+                        storeRefs[i][j] = (Object)temp;
                     } else if (i - 1 >= 0 && createBoard.board[i - 1][j].getPlayedStatus() == true) {
-                        ankers.add(new Coordinates(i, j));
+                        Coordinates temp = new Coordinates(i,j);
+                        ankers.add(temp);
+                        storeRefs[i][j] = (Object)temp;
                     }
 
                 }
@@ -125,6 +138,7 @@ public class Logic {
                     String temp = strPrefix + (char) ascii;
 
                     if (dictionaryEdit.isWord(temp, readFile.getRoot())) {
+
                         ankers.get(i).addChar((char) ascii);
                     }
                 }
@@ -200,8 +214,6 @@ public class Logic {
             combination(prefix + s.charAt(i), s.substring(i + 1), hashSet);
     }
 
-
-
     private void permutation(String prefix, String s) {
         int N = s.length();
         if (N == 0) {
@@ -267,7 +279,7 @@ public class Logic {
 
                                             while (value1.hasNext()) {
                                                 String test = (String) value1.next();
-                                              //  System.out.println("leftOverPerm " + test + "     usedLetters:  " + prefix + " " + strSufix);
+                                                //  System.out.println("leftOverPerm " + test + "     usedLetters:  " + prefix + " " + strSufix);
                                                 permutationfromTray(prefix + strSufix, test);
                                             }
                                             suffixFromBoardTray.clear();
@@ -288,7 +300,6 @@ public class Logic {
                             //System.out.println("foundword  " + prefix + " " + strSufix);
                         }
                     }
-
 
                 }
             }
@@ -325,27 +336,136 @@ public class Logic {
     int bestScore = -1;
     int bestRow = 2;
     int bestCol = 8;
-    char firstWild = 'n';
-    char secondWild;
-    String bestStr = "lemoned";
+    char fWild = 'n';
+    char sWild = '5';
+    String bestStr = "";
 
-    private void calcScore(int row, int col, String str){
-        boolean isValid = true;
+    public int calcScore(int row, int col, String str){
+        int tempCol = col;
+        int tempRow = row;
         for(int i = 0; i < str.length(); i++){
-            //if(ankers[row][col].getSet.contains(str.charAt(i)) )
+            Coordinates temp1 = (Coordinates) storeRefs[row][tempCol];
+            if(temp1 != null) {
+                System.out.println(temp1.getRow() + " " + temp1.getCol() + " " + temp1.getSet().toString());
+                if (!temp1.getSet().contains(str.charAt(i))) {
+                    if(!temp1.getSet().contains('0')){
+                        return 0;
+                    }
+
+                }
+            }else{
+                break;
+            }
+            tempCol++;
         }
+        int totalScore = 0;
+        int wordMulti = 1;
+        int wordScore = 0;
+        char firstWild=fWild;
+        char secondWild=sWild;
+        tempCol = col;
+
+        for(int k = 0; k < str.length(); k++){
+
+            if(createBoard.board[row][tempCol].getWordMult() != 0){
+                wordMulti = wordMulti*createBoard.board[row][tempCol].getWordMult();
+                //System.out.println("this is wordMulti: " +wordMulti);
+            }
+            if(createBoard.board[row][tempCol].getLetterMult()==0){
+                boolean wildOne = firstWild==str.charAt(k);
+                boolean wildTwo = secondWild==str.charAt(k);
+                if(wildOne||wildTwo){
+                    if(wildOne) firstWild='5';
+                    if(wildTwo) secondWild='5';
+                }else{
+
+                    wordScore+=tile.tile[str.charAt(k)-'a'].getMultiplier();
+                }
+
+            }else{
+                wordScore+=tile.tile[str.charAt(k)-'a'].getMultiplier()*createBoard.board[row][tempCol].getLetterMult();
+            }
+            tempCol++;
+            System.out.println("this is word score: "+wordScore );
+
+        }
+
+        totalScore+=wordScore*wordMulti;
+        if(str.length() == 7){
+            totalScore+=50;
+
+        }
+        System.out.println("this is the score: "+totalScore);
+
+        tempCol=col;
+        for(int s = 0;s < str.length(); s++) {
+            wordScore=0;
+            String strPrefix = "";
+            String strSufix = "";
+
+            boolean rand = true;
+
+            int wordMultip = createBoard.board[tempRow][tempCol].getWordMult();
+            int letterMultip = createBoard.board[tempRow][tempCol].getLetterMult();
+            boolean isAcross = false;
+            while (rand) {
+                //may be row and column are switched
+                if (tempRow>= 1 && createBoard.board[tempRow - 1][tempCol].getPlayedStatus() == true) {
+                    strPrefix = createBoard.board[tempRow - 1][tempCol].getLetter() + strPrefix;
+                    wordScore+=tile.tile[createBoard.board[tempRow-1][tempCol].getLetter()-'a'].getMultiplier();
+                    tempRow--;
+                    isAcross = true;
+                } else {
+                    rand = false;
+
+                }
+            }
+
+
+            tempRow=row;
+            boolean rand1 = true;
+
+            while (rand1) {
+                if (tempRow <= createBoard.board.length && createBoard.board[tempRow + 1][tempCol].getPlayedStatus() == true) {
+                    strSufix = strSufix + createBoard.board[row + 1][tempCol].getLetter();
+                    wordScore+=tile.tile[createBoard.board[tempRow+1][tempCol].getLetter()-'a'].getMultiplier();
+                    tempRow++;
+                    isAcross = true;
+                } else {
+                    rand1 = false;
+
+                }
+            }
+            System.out.println("str suffix: "+strSufix);
+            if(isAcross){
+                if(letterMultip !=0){
+                    if(str.charAt(s)!=firstWild){
+                        wordScore+=letterMultip*tile.tile[str.charAt(s)-'a'].getMultiplier();
+                    }
+
+                }else{
+                    wordScore+=tile.tile[str.charAt(s)-'a'].getMultiplier();
+                }
+
+                if(wordMultip!=0){
+                    wordScore=wordScore*wordMultip;
+                }
+
+            }
+            tempCol++;
+            totalScore+=wordScore;
+
+        }
+        System.out.println("this is the final score: "+totalScore);
+        return totalScore;
     }
-
-
-
-
 
     private void permutationfromTrayone(String prefix, String s) {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
-                System.out.println("1 here is : " + prefix);
+                //System.out.println("1 here is : " + prefix);
             }
         }
 
@@ -362,8 +482,10 @@ public class Logic {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
+
+
                 prefixBoardSuffixTray.add(prefix);
-                System.out.println("1 here is : " + prefix);
+                //System.out.println("1 here is : " + prefix);
             }
         }
 
@@ -384,3 +506,4 @@ public class Logic {
 
     }
 }
+

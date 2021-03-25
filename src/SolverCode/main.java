@@ -36,5 +36,6 @@ public class main {
         logic.findPrefixfromTray();
         logic.getSuffixFromBoard();
         logic.getPrefixFromBoard();
+        logic.calcScore(2,8,"lemoned");
     }
 }
