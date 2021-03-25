@@ -5,12 +5,20 @@ public class BoardObject {
     private int letter_mult;
     private boolean played;
     private char letter;
+    private boolean upperCase;
 
     public BoardObject(int word_Mult, int letter_mult, char letter, boolean played) {
         this.played = played;
         this.word_Mult = word_Mult;
         this.letter_mult = letter_mult;
         this.letter = letter;
+        this.upperCase=false;
+
+        if(letter>=65 && letter<=90){
+            this.letter = (char)  ((int)letter+32);
+            this.upperCase=true;
+        }
+
     }
 
     public char getLetter(){

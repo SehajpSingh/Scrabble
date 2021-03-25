@@ -5,6 +5,7 @@ import SolverCode.CreateBoard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class Logic {
     private DictionaryEdit dictionaryEdit;
@@ -18,8 +19,7 @@ public class Logic {
     private HashSet<String> prefixBoardSuffixTray = new HashSet<String>();
     private HashSet<String> wordBoardTray = new HashSet<String>();
     private ArrayList<Coordinates> ankers = new ArrayList<>();
-     Object [][] storeRefs;
-
+    private Object [][] storeRefs;
     private String tray;
     private String trayNoWild;
 
@@ -33,7 +33,7 @@ public class Logic {
 
     public void printBoard() {
         int loop = createBoard.board.length;
-
+        System.out.println();
         for (int i = 0; i < loop; i++) {
             for (int j = 0; j < loop; j++) {
                 char letter = createBoard.board[i][j].getLetter();
@@ -71,7 +71,7 @@ public class Logic {
                         storeRefs[i][j] = (Object)temp;
                         ankers.add(temp);
 
-                       // System.out.println("the refs are: "+temp1.getRow());
+                        // System.out.println("the refs are: "+temp1.getRow());
                     } else if (j - 1 >= 0 && createBoard.board[i][j - 1].getPlayedStatus() == true) {
                         Coordinates temp = new Coordinates(i,j);
                         ankers.add(temp);
@@ -90,14 +90,9 @@ public class Logic {
             }
         }
 
-//        for (int i = 0; i < ankers.size(); i++) {
-//            System.out.println(ankers.get(i).getRow()+" "+ ankers.get(i).getCol());
-//        }
-
     }
 
     private void storeCrossChecks() {
-        System.out.println("here in the function ");
         for (int i = 0; i < ankers.size(); i++) {
 
             String strPrefix = "";
@@ -120,7 +115,7 @@ public class Logic {
             boolean rand1 = true;
 
             while (rand1) {
-                if (row <= createBoard.board.length && createBoard.board[row + 1][col].getPlayedStatus() == true) {
+                if (row+1 < createBoard.board.length && createBoard.board[row + 1][col].getPlayedStatus() == true) {
                     strSufix = strSufix + createBoard.board[row + 1][col].getLetter();
                     row++;
                 } else {
@@ -157,7 +152,7 @@ public class Logic {
                     int ascii = 'a' + k;
                     String temp = strPrefix + (char) ascii + strSufix;
 
-                    if (dictionaryEdit.isWord(temp, readFile.getRoot())) {
+                    if (dictionaryEdit.isWord(temp.toLowerCase(), readFile.getRoot())) {
                         ankers.get(i).addChar((char) ascii);
                         //System.out.println("VALID WORD "+temp);
                     }
@@ -168,7 +163,7 @@ public class Logic {
     }
 
     public void findPrefixfromTray() {
-        tray = "ntnp*oi";
+        tray = "ntnbtoi";
         int countWild = 0;
         boolean asterik = false;
         for (int i = 0; i < tray.length(); i++) {
@@ -238,8 +233,7 @@ public class Logic {
         for (int i = 0; i < ankers.size(); i++) {
             int col = ankers.get(i).getCol();
             int row = ankers.get(i).getRow();
-
-
+            //System.out.println("row "+row + "col " + col);
             if ((col > 0 && !(createBoard.board[row][col - 1].getPlayedStatus())) || col == 0) {
 
                 Iterator value = allPrefix.iterator();
@@ -247,16 +241,34 @@ public class Logic {
                     String prefix = (String) value.next();
                     int currentCol = col;
                     String strSufix = "";
+//                    if (prefix.equals("lemoned")){
+//                        System.out.println("lemoned is here");
+//                    }
                     int leftMostLetter = col - prefix.length() + 1;
                     for (int k = 0; k < prefix.length(); k++) {
                         currentCol = leftMostLetter + k;
+                        int firstLetterCol = currentCol;
+                        int firstLetterRow = row;
 
                         for (int j = 0; j < prefix.length() && currentCol + 1 < createBoard.board.length && currentCol > 0; j++) {
                             if (createBoard.board[row][currentCol + 1].getPlayedStatus() == false) {
                                 currentCol++;
+
+                                if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
+                                    if (firstLetterCol >= 0 && firstLetterCol + prefix.length()-1 < createBoard.board.length) {
+                                        calcScore(firstLetterRow, firstLetterCol, prefix);
+                                        if (prefix.equals("tinpot")){
+                                            System.out.println("this is the word " + prefix + " with row "+firstLetterRow + " with col" + firstLetterCol);
+                                        }
+
+                                        break;
+                                    }
+                                }
+
                                 if (currentCol >= createBoard.board.length) {
                                     break;
                                 }
+
                             } else if (createBoard.board[row][currentCol + 1].getPlayedStatus() == true && j == prefix.length() - 1) {
                                 boolean rand1 = true;
 
@@ -280,7 +292,7 @@ public class Logic {
                                             while (value1.hasNext()) {
                                                 String test = (String) value1.next();
                                                 //  System.out.println("leftOverPerm " + test + "     usedLetters:  " + prefix + " " + strSufix);
-                                                permutationfromTray(prefix + strSufix, test);
+                                                permutationfromTray(firstLetterRow, firstLetterCol,prefix + strSufix, test);
                                             }
                                             suffixFromBoardTray.clear();
 
@@ -295,10 +307,14 @@ public class Logic {
                             }
                         }
 
-                        if (dictionaryEdit.isWord(prefix + strSufix, readFile.getRoot())) {
-                            //if((prefix+strSufix).equals("bodgiest"))
-                            //System.out.println("foundword  " + prefix + " " + strSufix);
-                        }
+//                        if (dictionaryEdit.isWord(prefix + strSufix, readFile.getRoot())) {
+//                            if (firstLetterCol>=0 && firstLetterCol + (prefix+strSufix).length()<createBoard.board.length ){
+//                                calcScore(firstLetterRow,firstLetterCol,prefix+strSufix);
+//                            }
+//                            if (strSufix.length()==0) {
+//                                System.out.println("prefix11 " + prefix);
+//                            }
+//                        }
                     }
 
                 }
@@ -327,7 +343,7 @@ public class Logic {
                 //System.out.println("prefix from board "+strPrefix);
                 Iterator value = prefixes.iterator();
                 while (value.hasNext()) {
-                    permutationfromTrayone(strPrefix, (String) value.next());
+                    permutationfromTrayone(row,col, strPrefix, (String) value.next());
                 }
             }
         }
@@ -346,15 +362,12 @@ public class Logic {
         for(int i = 0; i < str.length(); i++){
             Coordinates temp1 = (Coordinates) storeRefs[row][tempCol];
             if(temp1 != null) {
-                System.out.println(temp1.getRow() + " " + temp1.getCol() + " " + temp1.getSet().toString());
                 if (!temp1.getSet().contains(str.charAt(i))) {
                     if(!temp1.getSet().contains('0')){
                         return 0;
                     }
 
                 }
-            }else{
-                break;
             }
             tempCol++;
         }
@@ -386,7 +399,7 @@ public class Logic {
                 wordScore+=tile.tile[str.charAt(k)-'a'].getMultiplier()*createBoard.board[row][tempCol].getLetterMult();
             }
             tempCol++;
-            System.out.println("this is word score: "+wordScore );
+
 
         }
 
@@ -395,7 +408,7 @@ public class Logic {
             totalScore+=50;
 
         }
-        System.out.println("this is the score: "+totalScore);
+
 
         tempCol=col;
         for(int s = 0;s < str.length(); s++) {
@@ -426,7 +439,7 @@ public class Logic {
             boolean rand1 = true;
 
             while (rand1) {
-                if (tempRow <= createBoard.board.length && createBoard.board[tempRow + 1][tempCol].getPlayedStatus() == true) {
+                if (tempRow+1 < createBoard.board.length && createBoard.board[tempRow + 1][tempCol].getPlayedStatus() == true) {
                     strSufix = strSufix + createBoard.board[row + 1][tempCol].getLetter();
                     wordScore+=tile.tile[createBoard.board[tempRow+1][tempCol].getLetter()-'a'].getMultiplier();
                     tempRow++;
@@ -436,7 +449,7 @@ public class Logic {
 
                 }
             }
-            System.out.println("str suffix: "+strSufix);
+
             if(isAcross){
                 if(letterMultip !=0){
                     if(str.charAt(s)!=firstWild){
@@ -456,15 +469,17 @@ public class Logic {
             totalScore+=wordScore;
 
         }
-        System.out.println("this is the final score: "+totalScore);
+        System.out.println("this is the final score: "+totalScore + "  ");
         return totalScore;
     }
 
-    private void permutationfromTrayone(String prefix, String s) {
+    private void permutationfromTrayone(int row, int col, String prefix, String s) {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
+                //System.out.println("this is the word " + prefix + " with row "+row + " with col" + col);
+                calcScore(row,col,prefix);
                 //System.out.println("1 here is : " + prefix);
             }
         }
@@ -473,18 +488,18 @@ public class Logic {
             boolean ran = dictionaryEdit.isPrefix(prefix, readFile.getRoot()) && prefix.length() > 0;
 
             if (ran || prefix.length() == 0) {
-                permutationfromTray(prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
+                permutationfromTrayone(row, col, prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
             }
         }
     }
 
-    private void permutationfromTray(String prefix, String s) {
+    private void permutationfromTray(int row, int col, String prefix, String s) {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
-
-
                 prefixBoardSuffixTray.add(prefix);
+                calcScore(row,col,prefix);
+                //System.out.println("this is the word " + prefix + " with row "+row + " with col" + col);
                 //System.out.println("1 here is : " + prefix);
             }
         }
@@ -493,7 +508,7 @@ public class Logic {
             boolean ran = dictionaryEdit.isPrefix(prefix, readFile.getRoot()) && prefix.length() > 0;
 
             if (ran || prefix.length() == 0) {
-                permutationfromTray(prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
+                permutationfromTray(row, col, prefix + s.charAt(i), s.substring(0, i) + s.substring(i + 1, N));
             }
         }
     }

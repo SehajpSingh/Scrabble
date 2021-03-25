@@ -1,6 +1,5 @@
 package CommonCode;
 
-import CommonCode.TileObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,9 +20,7 @@ public class createTile {
         //Reading each line of file using Scanner class
         int lineNumber = 1;
 
-
         while (scnr.hasNextLine()) {
-
             String line = scnr.nextLine();
             String[] arr = line.split(" ");
             int mult = Integer.parseInt(arr[1]);

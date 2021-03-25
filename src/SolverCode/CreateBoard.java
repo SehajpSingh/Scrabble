@@ -1,5 +1,7 @@
 package SolverCode;
 import CommonCode.BoardObject;
+import CommonCode.Transpose;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,6 +16,10 @@ public class CreateBoard {
 
     public BoardObject board[][];
 
+
+
+    //delete
+    Transpose trans;
     public void create() throws FileNotFoundException {
 
         char tray[];
@@ -32,7 +38,7 @@ public class CreateBoard {
             line = scnr.nextLine();
 
             while (line.equals("")) {
-               // System.out.println("its a space");
+                // System.out.println("its a space");
                 line = scnr.nextLine();
             }
 
@@ -47,7 +53,7 @@ public class CreateBoard {
 
             for (int j = 0; j < arrayList.size(); j++) {
 
-             if (arrayList.get(j).length() == 1) {
+                if (arrayList.get(j).length() == 1) {
                     //System.out.println("j = " + j + "what is this =" + arrayList.get(j).charAt(0));
                     board[lines][j] = new BoardObject(0, 0, arrayList.get(j).charAt(0), true);
                     //System.out.println("this is the character: " + board[lines][j].getLetter());
@@ -70,6 +76,11 @@ public class CreateBoard {
         }
         line = scnr.nextLine();
         tray = line.toCharArray();
+        trans= new Transpose(board);
+        trans.transpose();
+        trans.printBoard();
+
+
     }
 
 }
