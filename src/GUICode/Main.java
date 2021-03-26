@@ -1,7 +1,6 @@
 package GUICode;
 
 import CommonCode.createTile;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -21,11 +19,25 @@ import java.util.Random;
 public class Main extends Application {
 
     private Pane layout = new Pane();
-    ArrayList<Rectangle> rects = new ArrayList<>();
-    ArrayList<Label> labels = new ArrayList<>();
-    ArrayList<Rectangle> tiles = new ArrayList<>();
-    ArrayList<Label> tileLetter = new ArrayList<>();
-    ArrayList<Integer> swapLetters = new ArrayList<>();
+
+    //board
+    private ArrayList<Rectangle> rects = new ArrayList<>();
+    private Label [][] labels = new Label[15][15];
+
+    //tiles book-keeping
+    private char[] tray = new char[7];
+    private ArrayList<Rectangle> tiles = new ArrayList<>();
+    private ArrayList<Label> tileLetter = new ArrayList<>();
+    private ArrayList<Integer> usedIndices = new ArrayList<>();
+    private ArrayList<Integer> thisMove = new ArrayList<>();
+
+    //row and col of the tile clicked
+    private ArrayList<Integer> Row = new ArrayList<>();
+    private ArrayList<Integer> Col = new ArrayList<>();
+
+    //stores the letters to be swapped
+    private ArrayList<Integer> swapLetters = new ArrayList<>();
+
 
     private Button Play = new Button();
     private Button Pass = new Button();
@@ -36,6 +48,7 @@ public class Main extends Application {
     private Rectangle scoreBoard;
     private boolean swap;
     private boolean tileClicked;
+    private boolean firstMove=true;
 
     private Label label;
     private Label name1;
@@ -43,7 +56,7 @@ public class Main extends Application {
     private Label comScor;
     private Label trayLetter;
     private String tileText;
-
+    private int tileClickedNum;
     protected static createTile tile;
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -58,7 +71,7 @@ public class Main extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Domino Game");
+        primaryStage.setTitle("Scrabble");
         Scene scene = new Scene(layout, 600, 600);
         tasks();
         createTray();
@@ -70,11 +83,18 @@ public class Main extends Application {
         scoreBoard();
         layout.getChildren().addAll(Play, Pass, Swap, Clear, scoreBoard, humScor, label, comScor, ok);
 
+        System.out.println("THIS IS THE SIZE: "+rects.size());
         for (int j = 0; j < rects.size(); j++) {
-            layout.getChildren().addAll(rects.get(j), labels.get(j));
+
+            layout.getChildren().addAll(rects.get(j));
         }
         for (int i = 0; i < 7; i++) {
             layout.getChildren().addAll(tiles.get(i), tileLetter.get(i));
+        }
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                layout.getChildren().addAll(labels[i][j]);
+            }
         }
 
         primaryStage.setScene(scene);
@@ -123,22 +143,57 @@ public class Main extends Application {
 
     public void handle(ActionEvent event) {
         if (event.getSource() == Play) {
-            System.out.println("singh is king");
-            //System.exit(0);
+            ifPlay();
         } else if (event.getSource() == Pass) {
             System.out.println("singh is king");
-            //System.exit(0);
         } else if (event.getSource() == Clear) {
-            System.out.println("singh is king");
-            //System.exit(0);
+            ifClear();
         } else if (event.getSource() == Swap) {
             swap = true;
-            // System.exit(0);
         } else if (event.getSource() == ok) {
             swap = false;
             tradeTiles();
-            // System.exit(0);
         }
+    }
+
+    private void ifPlay(){
+     if(firstMove){
+
+     }
+    }
+
+    private void ifClear(){
+        int a = 0;
+        for(int i=0; i<thisMove.size(); i++){
+            int ind = thisMove.get(i);
+
+            for(int j=0; j<usedIndices.size(); j++){
+                if(usedIndices.get(j)==ind){
+                    int row = Row.get(a);
+                    int col = Col.get(a);
+                    a++;
+                    usedIndices.remove(j);
+                    tileLetter.get(i).setText(String.valueOf(tray[i]));
+
+                    if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() == 0) {
+                        labels[row][col].setText("0");
+                    } else if (boards.board[row][col].getLetterMult() != 0 && boards.board[row][col].getWordMult() == 0) {
+                        int name2 = boards.board[row][col].getLetterMult();
+                        labels[row][col].setText(String.valueOf(name2));
+                    }else if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() != 0) {
+                        int name2 = boards.board[row][col].getWordMult();
+                        labels[row][col].setText(String.valueOf(name2));
+                    }
+                    // Label tmps = new Label("8");
+
+                }
+
+            }
+
+        }
+        thisMove.clear();
+        Row.clear();
+        Col.clear();
     }
 
     private void tasks() {
@@ -168,18 +223,18 @@ public class Main extends Application {
                         int x = tile / size;
                         int y = tile % size;
 
-                        if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false)) {
+                        if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
                             tileClicked = false;
+                            thisMove.add(thisMove.size(),tileClickedNum);
+                            labels[x][y].setText(tileText);
+                            tiles.get(tileClickedNum).setFill(Color.RED);
+                            tileLetter.get(tileClickedNum).setText("");
+                            usedIndices.add(usedIndices.size(),tileClickedNum);
+                            Row.add(Row.size(), x);
+                            Col.add(Col.size(), y);
 
-                            System.out.println("this is letter mult: " + boards.board[x][y].getLetterMult() + " this is word mult: " + boards.board[x][y].getWordMult());
-                           // boards.board[x][y].setLetter(tileText.charAt(0));
-                            System.out.println("THIS IS THE SIZE: "+labels.size());
 
-                            //fix this line indices are not working properly
-                            //labels.get(((x+1)*(x+1))*(15-y)-1).setText(tileText);
-                            //labels.get(0).setText("g");
                         }
-                        System.out.println("this is x: " + x + " this is y: " + y);
                     }
                 });
 
@@ -191,20 +246,19 @@ public class Main extends Application {
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
-                    labels.add(name1);
+                    labels[i][j] = name1;
+
 
                 } else if (boards.board[i][j].getLetterMult() != 0 && boards.board[i][j].getWordMult() == 0) {
                     rectangle.setFill(Color.BLUE);
                     name1 = new Label();
-
                     int name2 = boards.board[i][j].getLetterMult();
-
                     String names = String.valueOf(name2);
                     name1.setText(names);
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
-                    labels.add(name1);
+                    labels[i][j] =name1;
 
 
                 } else if (boards.board[i][j].getLetterMult() == 0 && boards.board[i][j].getWordMult() != 0) {
@@ -216,7 +270,7 @@ public class Main extends Application {
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
-                    labels.add(name1);
+                    labels[i][j] =name1;
 
                 }
                 rects.add(rectangle);
@@ -232,7 +286,10 @@ public class Main extends Application {
         int y = 850;
         for (int i = 0; i < 7; i++) {
             trayLetter = new Label();
+
+            //out of bounds exception sometimes
             String name2 = String.valueOf(tile.tray.get(i));
+            tray[i] = name2.charAt(0);
             trayLetter.setText(name2);
             trayLetter.setTextFill(Color.YELLOW);
             trayLetter.setLayoutX(x + 20);
@@ -272,20 +329,20 @@ public class Main extends Application {
                         }
                     } else {
                         int val = Integer.valueOf(num);
-                        tileClicked = true;
-                        tileText = tileLetter.get(val).getText();
-                        System.out.println(tileLetter.get(val).getText()+ " :this is the text");
-                        tiles.get(val).setFill(Color.LIGHTSLATEGREY);
+
+                        if(!usedIndices.contains(val)){
+                            tileClicked = true;
+                            tileText = tileLetter.get(val).getText();
+                            //System.out.println(tileLetter.get(val).getText()+ " :this is the text");
+                            tileClickedNum=val;
+                            tiles.get(val).setFill(Color.LIGHTSLATEGREY);
+                        }
+
                     }
                 }
             });
-
-
-
             tiles.add(rect);
             x = x + 50;
-
-
         }
     }
 
