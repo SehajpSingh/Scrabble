@@ -172,12 +172,11 @@ public class Main extends Application {
                             tileClicked = false;
 
                             System.out.println("this is letter mult: " + boards.board[x][y].getLetterMult() + " this is word mult: " + boards.board[x][y].getWordMult());
-                            System.out.println("yes it is false");
-                            boards.board[x][y].setLetter(tileText.charAt(0));
+                           // boards.board[x][y].setLetter(tileText.charAt(0));
                             System.out.println("THIS IS THE SIZE: "+labels.size());
 
                             //fix this line indices are not working properly
-                            labels.get(((x+1)*(x+1))*(15-y)-1).setText(tileText);
+                            //labels.get(((x+1)*(x+1))*(15-y)-1).setText(tileText);
                             //labels.get(0).setText("g");
                         }
                         System.out.println("this is x: " + x + " this is y: " + y);

@@ -8,7 +8,7 @@ public class Transpose {
         origBoard = board;
     }
 
-    public void transpose(){
+    public BoardObject[][] transpose(){
         transposeBoard =  new BoardObject[origBoard.length][origBoard.length];
 
         for(int i = 0; i < origBoard.length; i++){
@@ -17,6 +17,7 @@ public class Transpose {
                         //origBoard[j][i];
             }
         }
+        return transposeBoard;
     }
 
     public void printBoard() {

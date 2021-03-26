@@ -1,6 +1,6 @@
 package SolverCode;
-import CommonCode.*;
 
+import CommonCode.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ public class main {
 
     //delete
     Transpose trans;
+
     public void create() throws FileNotFoundException {
 
         char tray[];
@@ -40,7 +41,7 @@ public class main {
             List<String> arrayList = new ArrayList<String>();
 
             for (String str : arr) {
-                if (str.length()!= 0 && !(str.equals(" "))) {
+                if (str.length() != 0 && !(str.equals(" "))) {
                     arrayList.add(str);
                 }
             }
@@ -70,7 +71,7 @@ public class main {
         }
         line = scnr.nextLine();
         tray = line.toCharArray();
-        trans= new Transpose(board);
+        trans = new Transpose(board);
         trans.transpose();
         trans.printBoard();
 
@@ -78,7 +79,7 @@ public class main {
     }
 
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 
         //setting up dictionary
         ReadFile read = new ReadFile();
@@ -89,25 +90,41 @@ public class main {
         crea.tiles();
 
 
-
         //setting up board
         CreateBoard board = new CreateBoard();
         board.create();
 
         //caling the logic to solve the puzzle
-       Logic logic = new Logic(read.dictEdit, board, crea, read);
-       logic.printBoard();
+        for (int i = 0; i < board.boards.size(); i++) {
+            System.out.println();
+            board.board = board.boards.get(i);
+
+            Logic logic = new Logic(read.dictEdit, board, crea, read, board.trays.get(i));
+            logic.printBoard();
+            logic.findPrefixfromTray();
+            logic.getSuffixFromBoard();
+            logic.getPrefixFromBoard();
+            //get best row, col, and score
 
 
-        logic.findPrefixfromTray();
-        logic.getSuffixFromBoard();
-        logic.getPrefixFromBoard();
+            //transpose
+            System.out.println("this is transpose: ");
+            System.out.println();
+            board.board = board.transPose.get(i);
+            //board.transbBoard = board.transPose.get(i);
+            Logic logic1 = new Logic(read.dictEdit, board, crea, read, board.trays.get(i));
+            logic1.printBoard();
+            logic1.findPrefixfromTray();
+            logic1.getSuffixFromBoard();
+            logic1.getPrefixFromBoard();
+            //get best row, col, and score
 
+            //compare which has the highest score
+            //put string on the board but if the board is trasnposed, transpose it once again once before printing
+
+
+        }
     }
-
-
-
-
 
 
 }

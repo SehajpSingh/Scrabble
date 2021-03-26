@@ -22,12 +22,15 @@ public class Logic {
     private Object [][] storeRefs;
     private String tray;
     private String trayNoWild;
+    private int BestCol;
+    private int BestRow;
 
-    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file) {
+    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file, String tray) {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
         this.tile = tile;
         this.readFile = file;
+        this.tray=tray;
         storeRefs = new Object[createBoard.board.length][createBoard.board.length];
     }
 
@@ -163,7 +166,8 @@ public class Logic {
     }
 
     public void findPrefixfromTray() {
-        tray = "ntnbtoi";
+
+        //tray = "ntnbtoi";
         int countWild = 0;
         boolean asterik = false;
         for (int i = 0; i < tray.length(); i++) {
@@ -226,6 +230,7 @@ public class Logic {
             }
         }
     }
+    String leftOver="";
 
     public void getSuffixFromBoard() {
         //1. make sure the left of anker is empty
@@ -257,10 +262,6 @@ public class Logic {
                                 if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                                     if (firstLetterCol >= 0 && firstLetterCol + prefix.length()-1 < createBoard.board.length) {
                                         calcScore(firstLetterRow, firstLetterCol, prefix);
-                                        if (prefix.equals("tinpot")){
-                                            System.out.println("this is the word " + prefix + " with row "+firstLetterRow + " with col" + firstLetterCol);
-                                        }
-
                                         break;
                                     }
                                 }
@@ -274,11 +275,11 @@ public class Logic {
 
 
                                 while (rand1) {
-                                    if (currentCol < createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
+                                    if (currentCol+1 < createBoard.board.length && createBoard.board[row][currentCol + 1].getPlayedStatus() == true) {
                                         strSufix = strSufix + createBoard.board[row][currentCol + 1].getLetter();
                                         currentCol++;
                                     } else if (currentCol < createBoard.board.length) {
-                                        String leftOver = trayNoWild;
+                                        leftOver = trayNoWild;
                                         for (int a = 0; a < prefix.length(); a++) {
                                             leftOver = leftOver.replaceFirst("" + prefix.charAt(a), "");
 
@@ -359,6 +360,7 @@ public class Logic {
     public int calcScore(int row, int col, String str){
         int tempCol = col;
         int tempRow = row;
+
         for(int i = 0; i < str.length(); i++){
             Coordinates temp1 = (Coordinates) storeRefs[row][tempCol];
             if(temp1 != null) {
@@ -371,6 +373,7 @@ public class Logic {
             }
             tempCol++;
         }
+
         int totalScore = 0;
         int wordMulti = 1;
         int wordScore = 0;
@@ -400,12 +403,14 @@ public class Logic {
             }
             tempCol++;
 
-
         }
 
         totalScore+=wordScore*wordMulti;
-        if(str.length() == 7){
-            totalScore+=50;
+        if(leftOver.length()==0){
+            if(str.length()==7){
+                totalScore+=50;
+            }
+
 
         }
 
@@ -469,7 +474,19 @@ public class Logic {
             totalScore+=wordScore;
 
         }
-        System.out.println("this is the final score: "+totalScore + "  ");
+        //System.out.println("this is the final score: "+totalScore + "  ");
+
+        if(totalScore>bestScore){
+            if(col-1>= 0 && createBoard.board[row][col-1].getPlayedStatus()){
+                return 0;
+            }
+            bestScore=totalScore;
+            bestCol=col;
+            bestRow=row;
+            bestStr=str;
+            System.out.println("best score: "+bestScore+" bestRow: "+bestRow+" bestCol: "+bestCol+" bestStr "+bestStr);
+
+        }
         return totalScore;
     }
 
@@ -478,9 +495,9 @@ public class Logic {
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
-                //System.out.println("this is the word " + prefix + " with row "+row + " with col" + col);
-                calcScore(row,col,prefix);
-                //System.out.println("1 here is : " + prefix);
+                if(row+prefix.length()<createBoard.board.length){
+                    calcScore(row,col,prefix);
+                }
             }
         }
 
@@ -498,7 +515,10 @@ public class Logic {
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
-                calcScore(row,col,prefix);
+                if(row<createBoard.board.length && col+prefix.length()<createBoard.board.length)  {
+                    calcScore(row,col,prefix);
+                }
+
                 //System.out.println("this is the word " + prefix + " with row "+row + " with col" + col);
                 //System.out.println("1 here is : " + prefix);
             }
@@ -513,12 +533,5 @@ public class Logic {
         }
     }
 
-    private void Score() {
-
-    }
-
-    protected void clearAllSets() {
-
-    }
 }
 

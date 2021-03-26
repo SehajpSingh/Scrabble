@@ -49,6 +49,7 @@ public class DictionaryEdit {
         for (int i = 0; i < len; i++) {
             position = str.charAt(i) - 'a';
 
+            //out of bounds exception
             if (tree.arr[position] == null) {
                 return false;
             }
@@ -61,8 +62,6 @@ public class DictionaryEdit {
         return isFound;
 
     }
-
-
 
 
 }
