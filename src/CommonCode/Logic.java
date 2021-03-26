@@ -1,11 +1,9 @@
 package CommonCode;
-
 import SolverCode.CreateBoard;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
+import java.lang.*;
 
 public class Logic {
     private DictionaryEdit dictionaryEdit;
@@ -243,24 +241,26 @@ public class Logic {
 
                 Iterator value = allPrefix.iterator();
                 while (value.hasNext()) {
+                    leftOver = "";
                     String prefix = (String) value.next();
                     int currentCol = col;
                     String strSufix = "";
-//                    if (prefix.equals("lemoned")){
-//                        System.out.println("lemoned is here");
-//                    }
+
                     int leftMostLetter = col - prefix.length() + 1;
                     for (int k = 0; k < prefix.length(); k++) {
                         currentCol = leftMostLetter + k;
+
                         int firstLetterCol = currentCol;
                         int firstLetterRow = row;
 
-                        for (int j = 0; j < prefix.length() && currentCol + 1 < createBoard.board.length && currentCol > 0; j++) {
+
+                        for (int j = 0; j < prefix.length() && currentCol + 1 < createBoard.board.length && currentCol >= 0; j++) {
                             if (createBoard.board[row][currentCol + 1].getPlayedStatus() == false) {
                                 currentCol++;
 
                                 if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                                     if (firstLetterCol >= 0 && firstLetterCol + prefix.length()-1 < createBoard.board.length) {
+
                                         calcScore(firstLetterRow, firstLetterCol, prefix);
                                         break;
                                     }
@@ -307,20 +307,12 @@ public class Logic {
                                 break;
                             }
                         }
-
-//                        if (dictionaryEdit.isWord(prefix + strSufix, readFile.getRoot())) {
-//                            if (firstLetterCol>=0 && firstLetterCol + (prefix+strSufix).length()<createBoard.board.length ){
-//                                calcScore(firstLetterRow,firstLetterCol,prefix+strSufix);
-//                            }
-//                            if (strSufix.length()==0) {
-//                                System.out.println("prefix11 " + prefix);
-//                            }
-//                        }
                     }
 
                 }
             }
         }
+        leftOver = "";
     }
 
     public void getPrefixFromBoard() {
@@ -345,9 +337,11 @@ public class Logic {
                 Iterator value = prefixes.iterator();
                 while (value.hasNext()) {
                     permutationfromTrayone(row,col, strPrefix, (String) value.next());
+                    leftOver = "";
                 }
             }
         }
+
     }
 
     int bestScore = -1;
@@ -360,6 +354,8 @@ public class Logic {
     public int calcScore(int row, int col, String str){
         int tempCol = col;
         int tempRow = row;
+
+
 
         for(int i = 0; i < str.length(); i++){
             Coordinates temp1 = (Coordinates) storeRefs[row][tempCol];
@@ -374,6 +370,7 @@ public class Logic {
             tempCol++;
         }
 
+
         int totalScore = 0;
         int wordMulti = 1;
         int wordScore = 0;
@@ -382,7 +379,16 @@ public class Logic {
         tempCol = col;
 
         for(int k = 0; k < str.length(); k++){
-
+            if(createBoard.board[row][tempCol].getPlayedStatus()){
+                if(!createBoard.board[row][tempCol].equals(str.charAt(k))){
+                    return 0;
+                }
+            }
+            if(k==str.length()-1 && tempCol+1<createBoard.board.length){
+                if(createBoard.board[row][tempCol+1].getPlayedStatus()){
+                    return 0;
+                }
+            }
             if(createBoard.board[row][tempCol].getWordMult() != 0){
                 wordMulti = wordMulti*createBoard.board[row][tempCol].getWordMult();
                 //System.out.println("this is wordMulti: " +wordMulti);
@@ -406,8 +412,9 @@ public class Logic {
         }
 
         totalScore+=wordScore*wordMulti;
+
         if(leftOver.length()==0){
-            if(str.length()==7){
+            if(str.length()>=7){
                 totalScore+=50;
             }
 
@@ -430,7 +437,9 @@ public class Logic {
                 //may be row and column are switched
                 if (tempRow>= 1 && createBoard.board[tempRow - 1][tempCol].getPlayedStatus() == true) {
                     strPrefix = createBoard.board[tempRow - 1][tempCol].getLetter() + strPrefix;
-                    wordScore+=tile.tile[createBoard.board[tempRow-1][tempCol].getLetter()-'a'].getMultiplier();
+                    if(!createBoard.board[tempRow - 1][tempCol].isUpperCase()) {
+                        wordScore += tile.tile[createBoard.board[tempRow - 1][tempCol].getLetter() - 'a'].getMultiplier();
+                    }
                     tempRow--;
                     isAcross = true;
                 } else {
@@ -495,7 +504,8 @@ public class Logic {
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
-                if(row+prefix.length()<createBoard.board.length){
+
+                if(col+prefix.length()<createBoard.board.length){
                     calcScore(row,col,prefix);
                 }
             }
@@ -515,7 +525,9 @@ public class Logic {
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
+
                 if(row<createBoard.board.length && col+prefix.length()<createBoard.board.length)  {
+
                     calcScore(row,col,prefix);
                 }
 

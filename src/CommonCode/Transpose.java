@@ -1,4 +1,5 @@
 package CommonCode;
+import java.lang.Character;
 
 public class Transpose {
     private BoardObject transposeBoard[][];
@@ -14,7 +15,10 @@ public class Transpose {
         for(int i = 0; i < origBoard.length; i++){
             for(int j = 0; j < origBoard.length;j++){
                 transposeBoard[i][j]= new BoardObject(origBoard[j][i].getWordMult(),origBoard[j][i].getLetterMult(),origBoard[j][i].getLetter(),origBoard[j][i].getPlayedStatus());
-                        //origBoard[j][i];
+                if(origBoard[j][i].isUpperCase()){
+                    transposeBoard[i][j].setUpperCase(true);
+                }
+                //origBoard[j][i];
             }
         }
         return transposeBoard;

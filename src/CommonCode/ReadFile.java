@@ -34,7 +34,7 @@ public class ReadFile {
 
         }
     }
-    protected Dictionary getRoot(){
+    public Dictionary getRoot(){
         return root;
     }
 }

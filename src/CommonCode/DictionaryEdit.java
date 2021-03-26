@@ -24,7 +24,7 @@ public class DictionaryEdit {
         tree.setLeaf();
     }
 
-    protected boolean isWord(String str, Dictionary root) {
+    public boolean isWord(String str, Dictionary root) {
         int len = str.length();
         int position;
         Dictionary tree = root;

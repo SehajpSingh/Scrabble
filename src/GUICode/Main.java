@@ -1,5 +1,6 @@
 package GUICode;
 
+import CommonCode.ReadFile;
 import CommonCode.createTile;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -45,7 +46,7 @@ public class Main extends Application {
     private Button Clear = new Button();
     private Button Swap = new Button();
     private Button ok = new Button();
-    private static CreateGUIBoard boards;
+
     private Rectangle scoreBoard;
     private boolean swap;
     private boolean tileClicked;
@@ -58,9 +59,17 @@ public class Main extends Application {
     private Label trayLetter;
     private String tileText;
     private int tileClickedNum;
+
     protected static createTile tile;
+    private static CreateGUIBoard boards;
+    private static ReadFile read;
+    //private static
+
 
     public static void main(String[] args) throws FileNotFoundException {
+        read = new ReadFile();
+        read.readFile();
+
         boards = new CreateGUIBoard();
         boards.readBoard();
 
@@ -162,9 +171,6 @@ public class Main extends Application {
             int firstIndices = boards.boardSize;
             int half = (firstIndices / 2);
             if (Row.contains(half) && Col.contains(half)) {
-                //System.out.println("this is the board size " + firstIndices);
-                //System.out.println("this is half " + half);
-                //check if legal move
                 getString();
                 firstMove = false;
                 thisMove.clear();
@@ -178,16 +184,20 @@ public class Main extends Application {
     }
 
     private void getString() {
-        boolean rowsEqual=false;
-        boolean colsEqual=false;
+        //System.out.println("in the func");
+        boolean rowsEqual = false;
+        boolean colsEqual = false;
+
         for (int i = 0; i < Row.size() - 1; i++) {
 
             if (Row.get(i) == Row.get(i + 1)) {
                 rowsEqual = true;
             } else {
                 rowsEqual = false;
+
             }
         }
+
         for (int i = 0; i < Col.size() - 1; i++) {
             if (Col.get(i) == Col.get(i + 1)) {
                 colsEqual = true;
@@ -196,18 +206,114 @@ public class Main extends Application {
             }
         }
 
-        if(!rowsEqual || !colsEqual){
-            //invalid move=
-            System.out.println("invalid move");
+        if (rowsEqual) {
+            boolean test = false;
+            String str = "";
+            for (int i = 0; i < Col.size() - 1; i++) {
+                int thisCol = Col.get(i);
+                thisCol = thisCol + 1;
+                int nextCol = Col.get(i + 1);
+
+                if (thisCol == nextCol) {
+                    test = true;
+                    //System.out.println("Rows are good");
+
+                } else {
+                    test = false;
+                    ifClear();
+                    return;
+
+                }
+            }
+
+            if (test) {
+                for (int i = 0; i < thisMove.size(); i++) {
+                    str += tray[thisMove.get(i)];
+
+                }
+
+                if(read.dictEdit.isWord(str, read.getRoot())){
+                    System.out.println("this is correct word");
+                    updateBoard(str);
+                    updateGui();
+                }else{
+                    ifClear();
+                    updateGui();
+                }
+
+            }
+
+        } else if (colsEqual) {
+            boolean test1 = false;
+            String str1 = "";
+            for (int i = 0; i < Row.size() - 1; i++) {
+                int thisRow = Row.get(i);
+                thisRow = thisRow + 1;
+                int nextRow = Row.get(i + 1);
+
+                if (thisRow == nextRow) {
+                    test1 = true;
+
+                } else {
+                    test1 = false;
+                    ifClear();
+                    return;
+                }
+
+                if (test1) {
+                    for (int j = 0; j < thisMove.size(); j++) {
+                        str1 += tray[thisMove.get(j)];
+
+                    }
+
+                    if(read.dictEdit.isWord(str1, read.getRoot())){
+                        System.out.println("this is correct word");
+                        updateBoard(str1);
+                        updateGui();
+                    }else{
+                        ifClear();
+                        updateGui();
+                    }
+
+                }
+
+            }
+
+        } else if (!rowsEqual && !colsEqual) {
             ifClear();
-        }else{
-            System.out.println("this is valid move: ");
+        }
+
+
+    }
+
+    private void updateBoard(String str){
+       //row, col, and this move
+       //loop for the size of row
+       // pick up first row, col and add the new value at those indices
+        //create a universal print function that updates the values for all of theme everytime its called
+
+
+        for(int i = 0; i < Row.size(); i++){
+            int row=Row.get(i);
+            int col=Col.get(i);
+            boards.board[row][col].setLetter(tray[thisMove.get(i)]);
+        }
+
+    }
+
+    private void updateGui(){
+        System.out.println("update gui called");
+    for(int i = 0; i < boards.boardSize; i ++){
+        for(int j = 0; j < boards.boardSize; j++){
+            if(boards.board[i][j].getLetter() == '0'){
+                System.out.println("inside the if statement");
+                System.out.println("this is the text from board: "+ boards.board[i][j].getLetter());
+                labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
+            }
         }
     }
-
-    private void ComputerMove() {
-
     }
+
 
     private void ifClear() {
         int a = 0;
@@ -334,7 +440,11 @@ public class Main extends Application {
         for (int i = 0; i < 7; i++) {
             trayLetter = new Label();
 
-            //out of bounds exception sometimes
+            //out of bounds exception sometimes index 6 out of length of for 6]
+            //there were duplicates last time when there was error [q, w, a, h, h, p] and next to each other otherwise duplicates are fine
+            //[h, c, t, r, s, z]
+            System.out.println("THIS IS THE TRAY: " + tile.tray);
+            System.out.println("THIS IS THE TRAY length: " + tile.tray.size());
             String name2 = String.valueOf(tile.tray.get(i));
             tray[i] = name2.charAt(0);
             trayLetter.setText(name2);

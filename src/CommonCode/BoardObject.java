@@ -40,5 +40,13 @@ public class BoardObject {
     public boolean getPlayedStatus() {
         return this.played;
     }
+
+    public boolean isUpperCase(){
+        return upperCase;
+    }
+
+    public void setUpperCase(boolean bool){
+        this.upperCase=bool;
+    }
 }
 

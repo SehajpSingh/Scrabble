@@ -12,7 +12,7 @@ public class main {
 
     public BoardObject board[][];
 
-    //delete
+
     Transpose trans;
 
     public void create() throws FileNotFoundException {
