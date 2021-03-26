@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +23,7 @@ public class Main extends Application {
 
     //board
     private ArrayList<Rectangle> rects = new ArrayList<>();
-    private Label [][] labels = new Label[15][15];
+    private Label[][] labels = new Label[15][15];
 
     //tiles book-keeping
     private char[] tray = new char[7];
@@ -48,7 +49,7 @@ public class Main extends Application {
     private Rectangle scoreBoard;
     private boolean swap;
     private boolean tileClicked;
-    private boolean firstMove=true;
+    private boolean firstMove = true;
 
     private Label label;
     private Label name1;
@@ -83,7 +84,7 @@ public class Main extends Application {
         scoreBoard();
         layout.getChildren().addAll(Play, Pass, Swap, Clear, scoreBoard, humScor, label, comScor, ok);
 
-        System.out.println("THIS IS THE SIZE: "+rects.size());
+        System.out.println("THIS IS THE SIZE: " + rects.size());
         for (int j = 0; j < rects.size(); j++) {
 
             layout.getChildren().addAll(rects.get(j));
@@ -156,19 +157,65 @@ public class Main extends Application {
         }
     }
 
-    private void ifPlay(){
-     if(firstMove){
+    private void ifPlay() {
+        if (firstMove && Row.size() > 0 && Col.size() > 0) {
+            int firstIndices = boards.boardSize;
+            int half = (firstIndices / 2);
+            if (Row.contains(half) && Col.contains(half)) {
+                //System.out.println("this is the board size " + firstIndices);
+                //System.out.println("this is half " + half);
+                //check if legal move
+                getString();
+                firstMove = false;
+                thisMove.clear();
+                Row.clear();
+                Col.clear();
+            } else {
+                ifClear();
+            }
 
-     }
+        }
     }
 
-    private void ifClear(){
+    private void getString() {
+        boolean rowsEqual=false;
+        boolean colsEqual=false;
+        for (int i = 0; i < Row.size() - 1; i++) {
+
+            if (Row.get(i) == Row.get(i + 1)) {
+                rowsEqual = true;
+            } else {
+                rowsEqual = false;
+            }
+        }
+        for (int i = 0; i < Col.size() - 1; i++) {
+            if (Col.get(i) == Col.get(i + 1)) {
+                colsEqual = true;
+            } else {
+                colsEqual = false;
+            }
+        }
+
+        if(!rowsEqual || !colsEqual){
+            //invalid move=
+            System.out.println("invalid move");
+            ifClear();
+        }else{
+            System.out.println("this is valid move: ");
+        }
+    }
+
+    private void ComputerMove() {
+
+    }
+
+    private void ifClear() {
         int a = 0;
-        for(int i=0; i<thisMove.size(); i++){
+        for (int i = 0; i < thisMove.size(); i++) {
             int ind = thisMove.get(i);
 
-            for(int j=0; j<usedIndices.size(); j++){
-                if(usedIndices.get(j)==ind){
+            for (int j = 0; j < usedIndices.size(); j++) {
+                if (usedIndices.get(j) == ind) {
                     int row = Row.get(a);
                     int col = Col.get(a);
                     a++;
@@ -180,7 +227,7 @@ public class Main extends Application {
                     } else if (boards.board[row][col].getLetterMult() != 0 && boards.board[row][col].getWordMult() == 0) {
                         int name2 = boards.board[row][col].getLetterMult();
                         labels[row][col].setText(String.valueOf(name2));
-                    }else if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() != 0) {
+                    } else if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() != 0) {
                         int name2 = boards.board[row][col].getWordMult();
                         labels[row][col].setText(String.valueOf(name2));
                     }
@@ -225,11 +272,11 @@ public class Main extends Application {
 
                         if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
                             tileClicked = false;
-                            thisMove.add(thisMove.size(),tileClickedNum);
+                            thisMove.add(thisMove.size(), tileClickedNum);
                             labels[x][y].setText(tileText);
                             tiles.get(tileClickedNum).setFill(Color.RED);
                             tileLetter.get(tileClickedNum).setText("");
-                            usedIndices.add(usedIndices.size(),tileClickedNum);
+                            usedIndices.add(usedIndices.size(), tileClickedNum);
                             Row.add(Row.size(), x);
                             Col.add(Col.size(), y);
 
@@ -258,7 +305,7 @@ public class Main extends Application {
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
-                    labels[i][j] =name1;
+                    labels[i][j] = name1;
 
 
                 } else if (boards.board[i][j].getLetterMult() == 0 && boards.board[i][j].getWordMult() != 0) {
@@ -270,7 +317,7 @@ public class Main extends Application {
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
-                    labels[i][j] =name1;
+                    labels[i][j] = name1;
 
                 }
                 rects.add(rectangle);
@@ -330,11 +377,11 @@ public class Main extends Application {
                     } else {
                         int val = Integer.valueOf(num);
 
-                        if(!usedIndices.contains(val)){
+                        if (!usedIndices.contains(val)) {
                             tileClicked = true;
                             tileText = tileLetter.get(val).getText();
                             //System.out.println(tileLetter.get(val).getText()+ " :this is the text");
-                            tileClickedNum=val;
+                            tileClickedNum = val;
                             tiles.get(val).setFill(Color.LIGHTSLATEGREY);
                         }
 

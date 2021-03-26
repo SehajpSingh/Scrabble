@@ -10,13 +10,13 @@ public class CreateGUIBoard {
     //2.create the board object
     //3. print the stuff or information on GUI
 
-    File file = new File("/Users/sehajpunitsingh/Desktop/board.txt");
+    File file = new File("./resources/board.txt");
     Scanner scnr = new Scanner(file);
     String line = scnr.nextLine();
     String[] arr = line.split(" ");
     String size = arr[0];
-    int boardSize = Integer.parseInt(size);
-    BoardObject[][] board = new BoardObject[boardSize][boardSize];
+    protected int boardSize = Integer.parseInt(size);
+    protected BoardObject[][] board = new BoardObject[boardSize][boardSize];
 
     public CreateGUIBoard() throws FileNotFoundException {
     }

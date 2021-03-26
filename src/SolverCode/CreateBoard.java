@@ -30,7 +30,7 @@ public class CreateBoard {
 
         int lines;
         int boardSize;
-        File file = new File("/Users/sehajpunitsingh/Desktop/table.txt");
+        File file = new File("./resources/board.txt");
         Scanner scnr = new Scanner(file);
         String line;
 

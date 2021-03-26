@@ -14,7 +14,7 @@ public class createTile {
 
     public void tiles() throws FileNotFoundException {
         int tileIndex = 0;
-        File file = new File("/Users/sehajpunitsingh/Desktop/tiles.txt");
+        File file = new File("./resources/tiles.txt");
         Scanner scnr = new Scanner(file);
 
         //Reading each line of file using Scanner class
