@@ -25,7 +25,7 @@ public class Transpose {
     }
 
     public void printBoard() {
-        System.out.println("this is transpose board");
+        //System.out.println("this is transpose board");
 
         int loop = transposeBoard.length;
 

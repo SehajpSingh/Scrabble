@@ -19,6 +19,7 @@ public class CreateBoard {
     public BoardObject board[][];
     //public BoardObject transbBoard[][];
     public ArrayList<BoardObject[][]> boards = new ArrayList<BoardObject[][]>();
+    public ArrayList<BoardObject[][]> origBoards = new ArrayList<BoardObject[][]>();
     public ArrayList<BoardObject[][]> transPose = new ArrayList<BoardObject[][]>();
     public ArrayList<String> trays = new ArrayList<String>();
 
@@ -37,7 +38,7 @@ public class CreateBoard {
         while (scnr.hasNext()) {
             lines = 0;
             line = scnr.nextLine();
-            System.out.println("THIS IS SIZE: "+line);
+            //System.out.println("THIS IS SIZE: "+line);
             String[] arr = line.split(" ");
             String size = arr[0];
             boardSize = Integer.parseInt(size);
@@ -88,6 +89,7 @@ public class CreateBoard {
             //tray = line;
             //System.out.println("this is tray " +tray);
             boards.add(boards.size(),board);
+            origBoards.add(origBoards.size(),board);
            // printBoard();
 
 
