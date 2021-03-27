@@ -72,7 +72,7 @@ public class main {
 
             } else {
 
-                BoardObject temp[][]= board.transPose.get(i);;
+                BoardObject temp[][]= board.transPose.get(i);
                 System.out.println("Input Board:");
                 logic1.printBoard2(board.origBoards.get(i));
                 int r1 = logic1.bestRow;

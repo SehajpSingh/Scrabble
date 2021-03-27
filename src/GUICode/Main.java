@@ -239,8 +239,31 @@ public class Main extends Application {
             System.out.println("this is best string 1 : " + bestString1);
 
             if(bestSocre>=bestSocre1){
-                System.out.println("no transpose");
+                logic.printBoard();
+                int r = logic.bestRow;
+                int c = logic.bestCol;
+
+                for (int l = 0; l < bestString.length(); l++) {
+                    boards.board[r][c].setLetter(bestString.charAt(l));
+                    c++;
+                }
+                updateGui();
+                logic.printBoard1();
+
+                //System.out.println("no transpose");
+
             }else{
+                System.out.println("transpose board");
+                int r1 = logic1.bestRow;
+                int c1 = logic1.bestCol;
+
+                for (int l = 0; l < bestString1.length(); l++) {
+                    transBoard[r1][c1].setLetter(bestString1.charAt(l));
+                    c1++;
+                }
+                boards.board=transBoard;
+                updateGui();
+                logic.printBoard1();
 
             }
 
