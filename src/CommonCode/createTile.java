@@ -30,24 +30,21 @@ public class createTile {
                 tile[26] = new TileObject(arr[0].charAt(0), mult, freq);
             } else {
                 tile[arr[0].charAt(0) - 'a'] = new TileObject(arr[0].charAt(0), mult, freq);
-                //tileIndex++;
             }
-            //lineNumber++;
-
         }
-        
     }
 
     public void trays() {
         int size = tray.size();
-        for (int i = size; i < 7; i++) {
+        //for (int i = size; i < 7; i++)
+        while (size < 7) {
             Random rand = new Random();
-            int rand_int1 = rand.nextInt(27);
+            int rand_int1 = rand.nextInt(26);
             if (tile[rand_int1].getFrequency() >= 1) {
-                System.out.println("the ascii is"+rand_int1);
                 tray.add(tile[rand_int1].getLetter());
                 tile[rand_int1].withdrawLetter();
             }
+            size = tray.size();
         }
 
     }

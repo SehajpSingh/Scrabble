@@ -65,6 +65,7 @@ public class Main extends Application {
     private static ReadFile read;
     //private static
 
+    private int lastTile=0;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -93,7 +94,7 @@ public class Main extends Application {
         scoreBoard();
         layout.getChildren().addAll(Play, Pass, Swap, Clear, scoreBoard, humScor, label, comScor, ok);
 
-        System.out.println("THIS IS THE SIZE: " + rects.size());
+        //System.out.println("THIS IS THE SIZE: " + rects.size());
         for (int j = 0; j < rects.size(); j++) {
 
             layout.getChildren().addAll(rects.get(j));
@@ -155,7 +156,7 @@ public class Main extends Application {
         if (event.getSource() == Play) {
             ifPlay();
         } else if (event.getSource() == Pass) {
-            System.out.println("singh is king");
+            //System.out.println("singh is king");
         } else if (event.getSource() == Clear) {
             ifClear();
         } else if (event.getSource() == Swap) {
@@ -184,7 +185,6 @@ public class Main extends Application {
     }
 
     private void getString() {
-        //System.out.println("in the func");
         boolean rowsEqual = false;
         boolean colsEqual = false;
 
@@ -216,7 +216,6 @@ public class Main extends Application {
 
                 if (thisCol == nextCol) {
                     test = true;
-                    //System.out.println("Rows are good");
 
                 } else {
                     test = false;
@@ -232,13 +231,17 @@ public class Main extends Application {
 
                 }
 
-                if(read.dictEdit.isWord(str, read.getRoot())){
-                    System.out.println("this is correct word");
+                if (read.dictEdit.isWord(str, read.getRoot())) {
+                    //System.out.println("this is correct word");
+                    // System.out.println("this is string: "+str);
                     updateBoard(str);
                     updateGui();
-                }else{
-                    ifClear();
+                    updateTray();
+                } else {
+                    System.out.println("this is wrong word");
+                    System.out.println("this is string: " + str);
                     updateGui();
+                    ifClear();
                 }
 
             }
@@ -266,54 +269,85 @@ public class Main extends Application {
 
                     }
 
-                    if(read.dictEdit.isWord(str1, read.getRoot())){
+                    if (read.dictEdit.isWord(str1, read.getRoot())) {
                         System.out.println("this is correct word");
+                        System.out.println("this is string: "+str1);
                         updateBoard(str1);
                         updateGui();
-                    }else{
-                        ifClear();
+                        updateTray();
+                    } else {
+                         System.out.println("this is wrong word");
+                        System.out.println("this is string: "+str1);
                         updateGui();
+                        ifClear();
                     }
-
                 }
-
             }
 
         } else if (!rowsEqual && !colsEqual) {
             ifClear();
         }
-
-
     }
 
-    private void updateBoard(String str){
-       //row, col, and this move
-       //loop for the size of row
-       // pick up first row, col and add the new value at those indices
+    private void updateBoard(String str) {
+        //row, col, and this move
+        //loop for the size of row
+        // pick up first row, col and add the new value at those indices
         //create a universal print function that updates the values for all of theme everytime its called
 
-
-        for(int i = 0; i < Row.size(); i++){
-            int row=Row.get(i);
-            int col=Col.get(i);
+        for (int i = 0; i < Row.size(); i++) {
+            int row = Row.get(i);
+            int col = Col.get(i);
             boards.board[row][col].setLetter(tray[thisMove.get(i)]);
         }
 
     }
 
-    private void updateGui(){
+    private void updateGui() {
         System.out.println("update gui called");
-    for(int i = 0; i < boards.boardSize; i ++){
-        for(int j = 0; j < boards.boardSize; j++){
-            if(boards.board[i][j].getLetter() == '0'){
-                System.out.println("inside the if statement");
-                System.out.println("this is the text from board: "+ boards.board[i][j].getLetter());
-                labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
+        for (int i = 0; i < boards.boardSize; i++) {
+            for (int j = 0; j < boards.boardSize; j++) {
+
+                if(boards.board[i][j].getLetter() !='0'){
+                    labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
+                }
+                else if (boards.board[i][j].getLetterMult() != 0) {
+                    labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
+                } else if (boards.board[i][j].getWordMult() != 0) {
+                    labels[i][j].setText(String.valueOf(boards.board[i][j].getWordMult()));
+                }
+
+
+
             }
         }
     }
-    }
 
+    private void updateTray() {
+
+        System.out.println("tray update called");
+        for (int i = 0; i < thisMove.size(); i++) {
+            int index = thisMove.get(i);
+            boolean validMov = false;
+
+            while (validMov) {
+
+                Random rand = new Random();
+                int rand_int1 = rand.nextInt(26);
+
+                if (tile.tile[rand_int1].getFrequency() >= 1) {
+                    validMov = true;
+                    tray[index] = tile.tile[rand_int1].getLetter();
+                    System.out.println("this is letter: " + tile.tile[rand_int1].getLetter());
+                    tile.tile[rand_int1].withdrawLetter();
+                }
+            }
+        }
+
+        for (int j = 0; j < tray.length; j++) {
+            tileLetter.get(j).setText(String.valueOf(tray[j]));
+        }
+    }
 
     private void ifClear() {
         int a = 0;
@@ -329,11 +363,14 @@ public class Main extends Application {
                     tileLetter.get(i).setText(String.valueOf(tray[i]));
 
                     if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() == 0) {
+                        System.out.println("here");
                         labels[row][col].setText("0");
                     } else if (boards.board[row][col].getLetterMult() != 0 && boards.board[row][col].getWordMult() == 0) {
+                        System.out.println("here 1");
                         int name2 = boards.board[row][col].getLetterMult();
                         labels[row][col].setText(String.valueOf(name2));
                     } else if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() != 0) {
+                        System.out.println("here 2");
                         int name2 = boards.board[row][col].getWordMult();
                         labels[row][col].setText(String.valueOf(name2));
                     }
@@ -376,7 +413,10 @@ public class Main extends Application {
                         int x = tile / size;
                         int y = tile % size;
 
-                        if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
+                        if(Row.contains(x) && Col.contains(y)){
+                            //does nothing but prevents from placing a tile on top of another one
+                        }
+                        else if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
                             tileClicked = false;
                             thisMove.add(thisMove.size(), tileClickedNum);
                             labels[x][y].setText(tileText);
@@ -385,8 +425,6 @@ public class Main extends Application {
                             usedIndices.add(usedIndices.size(), tileClickedNum);
                             Row.add(Row.size(), x);
                             Col.add(Col.size(), y);
-
-
                         }
                     }
                 });
@@ -400,8 +438,6 @@ public class Main extends Application {
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
                     labels[i][j] = name1;
-
-
                 } else if (boards.board[i][j].getLetterMult() != 0 && boards.board[i][j].getWordMult() == 0) {
                     rectangle.setFill(Color.BLUE);
                     name1 = new Label();
@@ -412,8 +448,6 @@ public class Main extends Application {
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
                     labels[i][j] = name1;
-
-
                 } else if (boards.board[i][j].getLetterMult() == 0 && boards.board[i][j].getWordMult() != 0) {
                     rectangle.setFill(Color.GREY);
                     name1 = new Label();
@@ -424,11 +458,9 @@ public class Main extends Application {
                     name1.setLayoutX(x + 20);
                     name1.setLayoutY(y + 20);
                     labels[i][j] = name1;
-
                 }
                 rects.add(rectangle);
                 x = x + 45;
-
             }
         }
 
@@ -443,8 +475,8 @@ public class Main extends Application {
             //out of bounds exception sometimes index 6 out of length of for 6]
             //there were duplicates last time when there was error [q, w, a, h, h, p] and next to each other otherwise duplicates are fine
             //[h, c, t, r, s, z]
-            System.out.println("THIS IS THE TRAY: " + tile.tray);
-            System.out.println("THIS IS THE TRAY length: " + tile.tray.size());
+            //System.out.println("THIS IS THE TRAY: " + tile.tray);
+            // System.out.println("THIS IS THE TRAY length: " + tile.tray.size());
             String name2 = String.valueOf(tile.tray.get(i));
             tray[i] = name2.charAt(0);
             trayLetter.setText(name2);
@@ -464,6 +496,7 @@ public class Main extends Application {
             rect.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
+
                     String num = rect.getAccessibleHelp();
 
                     if (swap) {
@@ -486,6 +519,10 @@ public class Main extends Application {
                         }
                     } else {
                         int val = Integer.valueOf(num);
+                        int size = thisMove.size();
+
+                        tiles.get(lastTile).setFill(Color.RED);
+                        lastTile=val;
 
                         if (!usedIndices.contains(val)) {
                             tileClicked = true;
@@ -494,6 +531,7 @@ public class Main extends Application {
                             tileClickedNum = val;
                             tiles.get(val).setFill(Color.LIGHTSLATEGREY);
                         }
+
 
                     }
                 }
@@ -594,7 +632,6 @@ public class Main extends Application {
 
 
     }
-
 
 }
 
