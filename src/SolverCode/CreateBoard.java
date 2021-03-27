@@ -92,10 +92,6 @@ public class CreateBoard {
             origBoards.add(origBoards.size(),board);
            // printBoard();
 
-
-
-
-
             trans = new Transpose(board);
             transPose.add(transPose.size(),trans.transpose());
             //trans.printBoard();

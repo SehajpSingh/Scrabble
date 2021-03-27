@@ -7,13 +7,21 @@ public class Transpose {
 
     public Transpose(BoardObject board[][]) {
         origBoard = board;
+        System.out.println("this is board length"+ board.length);
     }
 
     public BoardObject[][] transpose(){
+        if(origBoard==null){
+            System.out.println("the board is null");
+        }
+
         transposeBoard =  new BoardObject[origBoard.length][origBoard.length];
 
         for(int i = 0; i < origBoard.length; i++){
             for(int j = 0; j < origBoard.length;j++){
+                if(origBoard[j][i]==null){
+                    System.out.println("transpose null for orig");
+                }
                 transposeBoard[i][j]= new BoardObject(origBoard[j][i].getWordMult(),origBoard[j][i].getLetterMult(),origBoard[j][i].getLetter(),origBoard[j][i].getPlayedStatus());
                 if(origBoard[j][i].isUpperCase()){
                     transposeBoard[i][j].setUpperCase(true);

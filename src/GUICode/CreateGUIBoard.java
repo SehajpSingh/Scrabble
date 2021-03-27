@@ -1,9 +1,8 @@
 package GUICode;
-
 import CommonCode.BoardObject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import java.util.Scanner;
 
 public class CreateGUIBoard {
@@ -16,12 +15,15 @@ public class CreateGUIBoard {
     protected int boardSize = Integer.parseInt(size);
     protected BoardObject[][] board = new BoardObject[boardSize][boardSize];
 
+
+
+
     public CreateGUIBoard() throws FileNotFoundException {
     }
 
-    protected void createBoard(int word_Mult, int letter_mult, char letter, boolean played) throws FileNotFoundException {
-        BoardObject guiBoard = new BoardObject(word_Mult, letter_mult, letter, played);
-    }
+    //protected void createBoard(int word_Mult, int letter_mult, char letter, boolean played) throws FileNotFoundException {
+       // BoardObject guiBoard = new BoardObject(word_Mult, letter_mult, letter, played);
+   // }
 
     protected void readBoard() {
 
@@ -42,6 +44,8 @@ public class CreateGUIBoard {
 
                 }
             }
+
+
         }
 
     }

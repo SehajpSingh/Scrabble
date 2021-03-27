@@ -24,7 +24,7 @@ public class TileObject {
         return this.letter;
     }
 
-    protected int getMultiplier() {
+    public int getMultiplier() {
         return this.multiplier;
     }
 

@@ -1,15 +1,14 @@
-package CommonCode;
+package GUICode;
 
-import SolverCode.CreateBoard;
-
+import CommonCode.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 
-public class Logic {
+
+public class GUILogic {
     private DictionaryEdit dictionaryEdit;
-    private CreateBoard createBoard;
+    private CreateGUIBoard createBoard;
     private createTile tile;
     private ReadFile readFile;
     private HashSet<String> prefixes = new HashSet<String>();
@@ -18,7 +17,7 @@ public class Logic {
     private HashSet<String> suffixFromBoardTray = new HashSet<String>();
     private HashSet<String> prefixBoardSuffixTray = new HashSet<String>();
     private HashSet<String> wordBoardTray = new HashSet<String>();
-    private ArrayList<Coordinates> ankers = new ArrayList<>();
+    public ArrayList<Coordinates> ankers = new ArrayList<>();
     private Object[][] storeRefs;
     private String tray;
     private String trayNoWild;
@@ -41,20 +40,19 @@ public class Logic {
         return bestScore;
     }
 
-    public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file, String tray) {
+    public GUILogic(DictionaryEdit dictionaryEdit, CreateGUIBoard createBoard, createTile tile, ReadFile file, String tray) {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
         this.tile = tile;
         this.readFile = file;
         this.tray = tray;
         storeRefs = new Object[createBoard.board.length][createBoard.board.length];
+        //System.out.println("this is board length: "+createBoard.board.length);
+        //printBoard();
     }
 
     public void printBoard() {
         int loop = createBoard.board.length;
-
-
-
         System.out.println();
         for (int i = 0; i < loop; i++) {
             for (int j = 0; j < loop; j++) {
@@ -130,7 +128,10 @@ public class Logic {
     public void ankerPoints() {
 
         int loop = createBoard.board.length;
+        System.out.println("this is loop: ");
         for (int i = 0; i < loop; i++) {
+
+
             for (int j = 0; j < loop; j++) {
                 if (createBoard.board[i][j].getPlayedStatus() == false) {
 
@@ -161,6 +162,7 @@ public class Logic {
     }
 
     public void storeCrossChecks() {
+
         for (int i = 0; i < ankers.size(); i++) {
 
             String strPrefix = "";
@@ -300,6 +302,7 @@ public class Logic {
     }
 
     public void getSuffixFromBoard() {
+
         //1. make sure the left of anker is empty
 
         for (int i = 0; i < ankers.size(); i++) {
@@ -405,8 +408,9 @@ public class Logic {
                         rand = false;
                     }
                 }
-                //System.out.println("prefix from board "+strPrefix);
+
                 Iterator value = prefixes.iterator();
+
                 while (value.hasNext()) {
                     permutationfromTrayone(row, col, strPrefix, (String) value.next());
                     leftOver = "";
@@ -568,14 +572,14 @@ public class Logic {
             bestCol = col;
             bestRow = row;
             bestStr = str;
-            System.out.println("best score: " + bestScore + " bestRow: " + bestRow + " bestCol: " + bestCol + " bestStr " + bestStr);
+             //System.out.println("best score: " + bestScore + " bestRow: " + bestRow + " bestCol: " + bestCol + " bestStr " + bestStr);
 
         }
         return totalScore;
     }
 
     private void permutationfromTrayone(int row, int col, String prefix, String s) {
-
+        //System.out.println("INSIDE PERM FROM TRAY ONE: ");
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
@@ -623,4 +627,5 @@ public class Logic {
     }
 
 }
+
 

@@ -1,7 +1,6 @@
 package GUICode;
 
-import CommonCode.ReadFile;
-import CommonCode.createTile;
+import CommonCode.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -39,6 +38,8 @@ public class Main extends Application {
 
     //stores the letters to be swapped
     private ArrayList<Integer> swapLetters = new ArrayList<>();
+    private GUILogic logic;
+    private GUILogic logic1;
 
 
     private Button Play = new Button();
@@ -63,9 +64,13 @@ public class Main extends Application {
     protected static createTile tile;
     private static CreateGUIBoard boards;
     private static ReadFile read;
+    private boolean turnHuman = true;
     //private static
 
-    private int lastTile=0;
+    private int lastTile = 0;
+
+    private Transpose trans;
+    protected BoardObject[][] transBoard;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -167,19 +172,78 @@ public class Main extends Application {
         }
     }
 
-    private void ifPlay() {
-        if (firstMove && Row.size() > 0 && Col.size() > 0) {
-            int firstIndices = boards.boardSize;
-            int half = (firstIndices / 2);
-            if (Row.contains(half) && Col.contains(half)) {
-                getString();
-                firstMove = false;
-                thisMove.clear();
-                Row.clear();
-                Col.clear();
-            } else {
-                ifClear();
+    private void ifPlay()  {
+
+        if (turnHuman) {
+            if (firstMove && Row.size() > 0 && Col.size() > 0) {
+                int firstIndices = boards.boardSize;
+                int half = (firstIndices / 2);
+                if (Row.contains(half) && Col.contains(half)) {
+                    getString();
+                    firstMove = false;
+                    thisMove.clear();
+                    Row.clear();
+                    Col.clear();
+                } else {
+                    ifClear();
+                }
+
             }
+        }
+        if (!turnHuman) {
+            System.out.println("computer play");
+            logic = new GUILogic(read.dictEdit, boards, tile, read, "catfryb");
+            logic.ankerPoints();
+            logic.storeCrossChecks();
+            logic.findPrefixfromTray();
+            logic.getSuffixFromBoard();
+            logic.getPrefixFromBoard();
+            logic.printBoard1();
+
+            int bestSocre = logic.getBestScore();
+            String bestString = logic.getBestStr();
+            int besRow = logic.BestRow;
+            int bestCol = logic.BestCol;
+            System.out.println("this is best score: " + bestSocre);
+            System.out.println("this is best string: " + bestString);
+
+            //CreateGUIBoard transGui = new CreateGUIBoard();
+            //transGui.readBoard();
+           // Transpose trans = new Transpose(boards.board);
+            //BoardObject[][] transBoard = trans.transpose();
+            //boards.board = boards.transBoard;
+
+            //call transpose at updated board not the blank board
+
+
+
+            trans = new Transpose(boards.board);
+            transBoard = new BoardObject[boards.boardSize][boards.boardSize];
+            System.out.println("boardsize: "+ transBoard.length);
+            transBoard = trans.transpose();
+            boards.board=transBoard;
+
+            logic1 = new GUILogic(read.dictEdit, boards, tile, read, "satfryl");
+            logic1.ankerPoints();
+            logic1.storeCrossChecks();
+            logic1.findPrefixfromTray();
+            logic1.getSuffixFromBoard();
+            logic1.getPrefixFromBoard();
+            logic1.printBoard1();
+
+            int bestSocre1 = logic1.getBestScore();
+            String bestString1 = logic1.getBestStr();
+            int besRow1 = logic.BestRow;
+            int bestCol1 = logic.BestCol;
+            System.out.println("this is best score 1 : " + bestSocre1);
+            System.out.println("this is best string 1 : " + bestString1);
+
+            if(bestSocre>=bestSocre1){
+                System.out.println("no transpose");
+            }else{
+
+            }
+
 
         }
     }
@@ -187,26 +251,31 @@ public class Main extends Application {
     private void getString() {
         boolean rowsEqual = false;
         boolean colsEqual = false;
-
+        // System.out.println("before first for loop");
         for (int i = 0; i < Row.size() - 1; i++) {
 
             if (Row.get(i) == Row.get(i + 1)) {
                 rowsEqual = true;
             } else {
                 rowsEqual = false;
+                break;
 
             }
         }
 
+        //System.out.println("before second for loop");
         for (int i = 0; i < Col.size() - 1; i++) {
             if (Col.get(i) == Col.get(i + 1)) {
                 colsEqual = true;
             } else {
                 colsEqual = false;
+                break;
             }
         }
 
+
         if (rowsEqual) {
+            System.out.println("rowsequal");
             boolean test = false;
             String str = "";
             for (int i = 0; i < Col.size() - 1; i++) {
@@ -216,36 +285,27 @@ public class Main extends Application {
 
                 if (thisCol == nextCol) {
                     test = true;
-
                 } else {
                     test = false;
-                    ifClear();
-                    return;
-
+                    wrongMove();
+                    break;
                 }
             }
 
             if (test) {
                 for (int i = 0; i < thisMove.size(); i++) {
                     str += tray[thisMove.get(i)];
-
                 }
 
                 if (read.dictEdit.isWord(str, read.getRoot())) {
-                    //System.out.println("this is correct word");
-                    // System.out.println("this is string: "+str);
                     updateBoard(str);
                     updateGui();
                     updateTray();
+                    turnHuman = false;
                 } else {
-                    System.out.println("this is wrong word");
-                    System.out.println("this is string: " + str);
-                    updateGui();
-                    ifClear();
+                    wrongMove();
                 }
-
             }
-
         } else if (colsEqual) {
             boolean test1 = false;
             String str1 = "";
@@ -259,34 +319,37 @@ public class Main extends Application {
 
                 } else {
                     test1 = false;
-                    ifClear();
+                    wrongMove();
                     return;
                 }
 
                 if (test1) {
                     for (int j = 0; j < thisMove.size(); j++) {
                         str1 += tray[thisMove.get(j)];
-
                     }
 
                     if (read.dictEdit.isWord(str1, read.getRoot())) {
-                        System.out.println("this is correct word");
-                        System.out.println("this is string: "+str1);
+                        //  System.out.println("this is correct word");
+                        // System.out.println("this is string: "+str1);
                         updateBoard(str1);
                         updateGui();
                         updateTray();
+                        turnHuman = false;
+
                     } else {
-                         System.out.println("this is wrong word");
-                        System.out.println("this is string: "+str1);
-                        updateGui();
-                        ifClear();
+                        wrongMove();
                     }
                 }
             }
-
         } else if (!rowsEqual && !colsEqual) {
-            ifClear();
+            wrongMove();
         }
+    }
+
+    private void wrongMove() {
+        updateGui();
+        ifClear();
+        refreshTray();
     }
 
     private void updateBoard(String str) {
@@ -299,6 +362,7 @@ public class Main extends Application {
             int row = Row.get(i);
             int col = Col.get(i);
             boards.board[row][col].setLetter(tray[thisMove.get(i)]);
+            boards.board[row][col].setPlayed(true);
         }
 
     }
@@ -308,15 +372,13 @@ public class Main extends Application {
         for (int i = 0; i < boards.boardSize; i++) {
             for (int j = 0; j < boards.boardSize; j++) {
 
-                if(boards.board[i][j].getLetter() !='0'){
+                if (boards.board[i][j].getLetter() != '0') {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
-                }
-                else if (boards.board[i][j].getLetterMult() != 0) {
+                } else if (boards.board[i][j].getLetterMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
                 } else if (boards.board[i][j].getWordMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getWordMult()));
                 }
-
 
 
             }
@@ -325,7 +387,7 @@ public class Main extends Application {
 
     private void updateTray() {
 
-        System.out.println("tray update called");
+       // System.out.println("tray update called");
         for (int i = 0; i < thisMove.size(); i++) {
             int index = thisMove.get(i);
             boolean validMov = false;
@@ -338,7 +400,7 @@ public class Main extends Application {
                 if (tile.tile[rand_int1].getFrequency() >= 1) {
                     validMov = true;
                     tray[index] = tile.tile[rand_int1].getLetter();
-                    System.out.println("this is letter: " + tile.tile[rand_int1].getLetter());
+                    //System.out.println("this is letter: " + tile.tile[rand_int1].getLetter());
                     tile.tile[rand_int1].withdrawLetter();
                 }
             }
@@ -346,6 +408,12 @@ public class Main extends Application {
 
         for (int j = 0; j < tray.length; j++) {
             tileLetter.get(j).setText(String.valueOf(tray[j]));
+        }
+    }
+
+    private void refreshTray() {
+        for (int i = 0; i < tray.length; i++) {
+            tileLetter.get(i).setText(String.valueOf(tray[i]));
         }
     }
 
@@ -360,17 +428,17 @@ public class Main extends Application {
                     int col = Col.get(a);
                     a++;
                     usedIndices.remove(j);
-                    tileLetter.get(i).setText(String.valueOf(tray[i]));
+
 
                     if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() == 0) {
-                        System.out.println("here");
+                        //System.out.println("here");
                         labels[row][col].setText("0");
                     } else if (boards.board[row][col].getLetterMult() != 0 && boards.board[row][col].getWordMult() == 0) {
-                        System.out.println("here 1");
+                        //System.out.println("here 1");
                         int name2 = boards.board[row][col].getLetterMult();
                         labels[row][col].setText(String.valueOf(name2));
                     } else if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() != 0) {
-                        System.out.println("here 2");
+                        //System.out.println("here 2");
                         int name2 = boards.board[row][col].getWordMult();
                         labels[row][col].setText(String.valueOf(name2));
                     }
@@ -413,10 +481,9 @@ public class Main extends Application {
                         int x = tile / size;
                         int y = tile % size;
 
-                        if(Row.contains(x) && Col.contains(y)){
+                        if (Row.contains(x) && Col.contains(y)) {
                             //does nothing but prevents from placing a tile on top of another one
-                        }
-                        else if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
+                        } else if ((tileClicked) && (boards.board[x][y].getPlayedStatus() == false) && !usedIndices.contains(tileClickedNum)) {
                             tileClicked = false;
                             thisMove.add(thisMove.size(), tileClickedNum);
                             labels[x][y].setText(tileText);
@@ -522,7 +589,7 @@ public class Main extends Application {
                         int size = thisMove.size();
 
                         tiles.get(lastTile).setFill(Color.RED);
-                        lastTile=val;
+                        lastTile = val;
 
                         if (!usedIndices.contains(val)) {
                             tileClicked = true;

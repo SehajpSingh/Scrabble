@@ -42,7 +42,7 @@ public class DictionaryEdit {
         return isFound;
     }
 
-    protected boolean isPrefix(String str, Dictionary root){
+    public boolean isPrefix(String str, Dictionary root){
         int len = str.length();
         int position;
         Dictionary tree = root;

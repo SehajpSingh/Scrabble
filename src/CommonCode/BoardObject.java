@@ -41,6 +41,10 @@ public class BoardObject {
         return this.played;
     }
 
+    public void setPlayed(boolean played) {
+        this.played = played;
+    }
+
     public boolean isUpperCase(){
         return upperCase;
     }

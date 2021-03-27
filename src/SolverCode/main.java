@@ -37,7 +37,6 @@ public class main {
             logic.getPrefixFromBoard();
 
             int bestSocre = logic.getBestScore();
-
             String bestString = logic.getBestStr();
 
 
