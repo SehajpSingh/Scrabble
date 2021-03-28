@@ -22,7 +22,7 @@ public class Main extends Application {
     private Pane layout = new Pane();
 
     //board
-    private ArrayList<Rectangle> rects = new ArrayList<>();
+    private Rectangle[][] rects = new Rectangle[15][15];
     private Label[][] labels = new Label[15][15];
 
     //tiles book-keeping
@@ -70,6 +70,10 @@ public class Main extends Application {
     private int lastTile = 0;
     private Transpose trans;
     protected BoardObject[][] transBoard;
+    protected BoardObject[][] tempBoard;
+
+    private int anchorRow;
+    private int anchorCol;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -99,8 +103,11 @@ public class Main extends Application {
         layout.getChildren().addAll(Play, Pass, Swap, Clear, scoreBoard, humScor, label, comScor, ok);
 
         //System.out.println("THIS IS THE SIZE: " + rects.size());
-        for (int j = 0; j < rects.size(); j++) {
-            layout.getChildren().addAll(rects.get(j));
+        for (int j = 0; j < rects.length; j++) {
+            for (int k = 0; k < rects.length; k++) {
+                layout.getChildren().addAll(rects[j][k]);
+            }
+
         }
         for (int i = 0; i < 7; i++) {
             layout.getChildren().addAll(tiles.get(i), tileLetter.get(i));
@@ -183,7 +190,7 @@ public class Main extends Application {
                     ifClear();
                 }
 
-            }else{
+            } else {
                 //first get the input such as the strings and stuff
                 //calculate new anchor points
                 //check if tile is placed on any of the anchors
@@ -207,7 +214,6 @@ public class Main extends Application {
             logic.getSuffixFromBoard();
             logic.getPrefixFromBoard();
             //logic.printBoard1();
-
             int bestSocre = logic.getBestScore();
             String bestString = logic.getBestStr();
             int besRow = logic.BestRow;
@@ -231,13 +237,13 @@ public class Main extends Application {
 
             int bestSocre1 = logic1.getBestScore();
             String bestString1 = logic1.getBestStr();
-            int besRow1 = logic.BestRow;
-            int bestCol1 = logic.BestCol;
+            int besRow1 = logic1.BestRow;
+            int bestCol1 = logic1.BestCol;
             // System.out.println("this is best score 1 : " + bestSocre1);
             //System.out.println("this is best string 1 : " + bestString1);
 
             if (bestSocre >= bestSocre1) {
-                System.out.println("board before update");
+                System.out.println("normal board before update");
                 logic.printBoard();
                 int r = logic.bestRow;
                 int c = logic.bestCol;
@@ -248,9 +254,9 @@ public class Main extends Application {
                     c++;
                 }
                 updateGui();
-                System.out.println("board after update");
+                System.out.println("normal board after update");
                 logic.printBoard1();
-                updateCompStr(cmp, logic1.getBestStr());
+                updateCompStr(cmp, logic.getBestStr());
 
                 //System.out.println("no transpose");
 
@@ -262,7 +268,7 @@ public class Main extends Application {
                 logic1.printBoard();
                 for (int l = 0; l < bestString1.length(); l++) {
                     transBoard[r1][c1].setLetter(bestString1.charAt(l));
-                    boards.board[r1][c1].setPlayed(true);
+                    transBoard[r1][c1].setPlayed(true);
                     c1++;
                 }
                 BoardObject tempBoard[][] = transBoard;
@@ -276,43 +282,285 @@ public class Main extends Application {
         }
     }
 
-    private void humanMove(){
-        //check if the first row and column make an anchor point
-        //if they are anchors then get the letter from left and right
+    private void humanMove() {
+        //check if the first row and column make an anchor point --done
+        //check if letters are connected --done
+        //if they are anchors then get the letter from left and right--done from left and right
         //get the letter from top and bottom
         //do the same from all other newly placed letters get their top bottom
         // and left right don't worry because anchor will get it
         //pass each of the strings to the dictionary to check if they are valid words
         //if they are valid words then add them to the board and scoring
 
-        String temp = "";
-        for(char c: tray){
-            temp+=c;
+
+        if (!anchorsCheck()) {
+            wrongMove();
+            resetBookeping();
         }
 
+        if (Row.size() > 1 && !ifConnected()) {
+            wrongMove();
+            resetBookeping();
+            //System.out.println("they are not connected");
+        }
+        // check if rows and cols are connected
+        else {
+            System.out.println("the are connected");
+            System.out.println("best Row: " + anchorRow);
+            System.out.println("anchors col: " + anchorCol);
+            String sol = leftString();
+            if (read.dictEdit.isWord(sol, read.getRoot())) {
+                System.out.println("the word is correct:" + sol);
+            }
+
+            String sol1 = upString();
+            if (read.dictEdit.isWord(sol1, read.getRoot())) {
+                System.out.println("the word is correct:" + sol1);
+            }
+
+        }
+
+
+    }
+
+    private boolean ifConnected() {
+
+        boolean rowsEqual = false;
+        boolean colsEqual = false;
+
+        for (int i = 0; i < Row.size() - 1; i++) {
+            // System.out.println("inside the for loop 1");
+            if (Row.get(i) == Row.get(i + 1)) {
+                //System.out.println("inside rows equal");
+                rowsEqual = true;
+            } else {
+                rowsEqual = false;
+                break;
+            }
+        }
+
+        for (int i = 0; i < Col.size() - 1; i++) {
+            //System.out.println("inside the for loop 2");
+            if (Col.get(i) == Col.get(i + 1)) {
+                //System.out.println("inside cols equal");
+                colsEqual = true;
+            } else {
+                colsEqual = false;
+                break;
+            }
+        }
+
+        if (rowsEqual) {
+            //System.out.println("rows equaled so cols");
+            boolean test = false;
+            for (int i = 0; i < Col.size() - 1; i++) {
+                int thisCol = Col.get(i);
+                thisCol = thisCol + 1;
+                int nextCol = Col.get(i + 1);
+
+                if (thisCol == nextCol) {
+                    // System.out.println("both row and col worked");
+                    test = true;
+                } else {
+                    //System.out.println("both row and col did not work");
+                    test = false;
+                    break;
+                }
+            }
+
+            if (test) {
+                return true;
+            }
+
+        }
+
+
+        if (colsEqual) {
+            boolean test1 = false;
+
+            for (int i = 0; i < Row.size() - 1; i++) {
+                int thisRow = Row.get(i);
+                thisRow = thisRow + 1;
+                int nextRow = Row.get(i + 1);
+
+                if (thisRow == nextRow) {
+                    // System.out.println("both row and col worked 2");
+                    test1 = true;
+
+                } else {
+                    //System.out.println("both row and col not worked 2");
+                    test1 = false;
+                    break;
+                }
+            }
+            if (test1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String leftString() {
+        tempBoard = boards.board;
+        updateTempBoard();
+        System.out.println("temp board after printing");
+        logic.printBoard2(tempBoard);
+
+        boolean run = true;
+        boolean run1 = true;
+        int col = anchorCol;
+        String temp = "";
+
+        while (run) {
+            System.out.println("inside the left loop");
+            System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
+
+            System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
+            if (col > 0 && tempBoard[anchorRow][col].getLetter() != '0') {
+                System.out.println("inside left");
+                temp += tempBoard[anchorRow][col].getLetter();
+                col--;
+            } else {
+                run = false;
+            }
+        }
+
+        char[] as = temp.toCharArray();
+        String ans = "";
+        for (int a = as.length - 1; a >= 0; a--) {
+            ans += as[a];
+        }
+
+        temp = ans;
+        System.out.println("THIS IS LEFT STRING: " + temp);
+
+        if (temp.length() > 1) {
+            col = anchorCol + 1;
+        } else {
+            col = anchorCol;
+        }
+
+        while (run1) {
+            System.out.println("inside the right loop");
+            System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
+            if (col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') {
+                System.out.println("inside right");
+                temp += tempBoard[anchorRow][col].getLetter();
+                col++;
+            } else {
+                run1 = false;
+            }
+        }
+        System.out.println("this is the string: " + temp);
+        return temp;
+    }
+
+    private String upString() {
+        boolean run = true;
+        boolean run1 = true;
+        int row = anchorRow;
+        String temp = "";
+
+        while (run) {
+            // System.out.println("inside the left loop");
+            // System.out.println("this is where we start: row : "+anchorRow+" col: "+row);
+
+            System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+            if (row > 0 && tempBoard[row][anchorCol].getLetter() != '0') {
+                System.out.println("inside up");
+                temp += tempBoard[row][anchorCol].getLetter();
+                row--;
+            } else {
+                run = false;
+            }
+        }
+
+        char[] as = temp.toCharArray();
+        String ans = "";
+        for (int a = as.length - 1; a >= 0; a--) {
+            ans += as[a];
+        }
+
+        temp = ans;
+        System.out.println("THIS IS Up STRING: " + temp);
+
+        if (temp.length() > 1) {
+            row = anchorRow + 1;
+        } else {
+            row = anchorRow;
+        }
+
+
+        while (run1) {
+            System.out.println("inside the bottom loop");
+            System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+            if (row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') {
+                System.out.println("inside bottom");
+                temp += tempBoard[row][anchorCol].getLetter();
+                row++;
+            } else {
+                run1 = false;
+            }
+        }
+        System.out.println("this is the up string complete: " + temp);
+        return temp;
+
+    }
+
+    private void updateTempBoard() {
+
+        for (int i = 0; i < Row.size(); i++) {
+            int row = Row.get(i);
+            int col = Col.get(i);
+            tempBoard[row][col].setLetter(tray[thisMove.get(i)]);
+            tempBoard[row][col].setPlayed(true);
+        }
+    }
+
+    private boolean anchorsCheck() {
+        ArrayList<Integer> ankerRow = new ArrayList<>();
+        ArrayList<Integer> ankeraCol = new ArrayList<>();
+        String temp = "";
+        for (char c : tray) {
+            temp += c;
+        }
         GUILogic logic12 = new GUILogic(read.dictEdit, boards, tile, read, temp);
         logic12.ankerPoints();
-        System.out.println("the size of row: "+Row.size());
-        System.out.println("the size of anchor points: "+logic12.ankers.size());
-        for(int row: Row){
-            System.out.println("");
+
+        int b = 0;
+        for (Coordinates coor : logic12.ankers) {
+            ankerRow.add(coor.getRow());
+            ankeraCol.add(coor.getCol());
+            //System.out.println("these are anker rows: "+ankerRow.get(b) + " anker col: "+ankeraCol.get(b));
+            b++;
         }
 
 
-
+        for (int i = 0; i < Row.size(); i++) {
+            int row = Row.get(i);
+            int col = Col.get(i);
+            //System.out.println("this is row: "+row+" this is col: "+col);
+            if (ankerRow.contains(row) && ankeraCol.contains(col)) {
+                anchorRow = row;
+                anchorCol = col;
+                //System.out.println("they are on ankers");
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateCompStr(String cmp, String best) {
         char[] cmp1 = cmp.toCharArray();
         char[] best1 = best.toCharArray();
-        System.out.println("this is best String: " + best);
-        System.out.println("this is comp tray before: " + cmp);
+        //System.out.println("this is best cmp String: " + best);
+        //System.out.println("this is comp tray before: " + cmp);
 
         for (int i = 0; i < cmp.length(); i++) {
             for (int j = 0; j < best.length(); j++) {
                 if (i < cmp.length() && cmp1[i] == best1[j]) {
-                    System.out.println("yes they matched");
-                    System.out.println("this letter matched: " + cmp1[i] + " " + best1[j]);
+                    // System.out.println("yes they matched");
+                    // System.out.println("this letter matched: " + cmp1[i] + " " + best1[j]);
 
                     boolean validMov = false;
                     while (!validMov) {
@@ -321,7 +569,7 @@ public class Main extends Application {
 
                         if (tile.tile[rand_int1].getFrequency() >= 1) {
                             validMov = true;
-                            System.out.println("this is new letter: " + tile.tile[rand_int1].getLetter());
+                            //    System.out.println("this is new letter: " + tile.tile[rand_int1].getLetter());
                             cmpTray[i] = tile.tile[rand_int1].getLetter();
                             tile.tile[rand_int1].withdrawLetter();
                         }
@@ -383,7 +631,7 @@ public class Main extends Application {
                     updateTray();
                     refreshTray();
                     resetBookeping();
-                    firstMove=false;
+                    firstMove = false;
                     turnHuman = false;
                 } else {
                     wrongMove();
@@ -419,7 +667,7 @@ public class Main extends Application {
                         updateTray();
                         refreshTray();
                         resetBookeping();
-                        firstMove=false;
+                        firstMove = false;
                         turnHuman = false;
 
                     } else {
@@ -434,7 +682,7 @@ public class Main extends Application {
         }
     }
 
-    private void resetBookeping(){
+    private void resetBookeping() {
         Row.clear();
         Col.clear();
         thisMove.clear();
@@ -469,7 +717,7 @@ public class Main extends Application {
 
                 if (boards.board[i][j].getLetter() != '0') {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
-                    rects.get(i).setFill(Color.BLACK);
+                    rects[i][j].setFill(Color.BROWN);
 
                 } else if (boards.board[i][j].getLetterMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
@@ -638,7 +886,7 @@ public class Main extends Application {
                     name1.setLayoutY(y + 20);
                     labels[i][j] = name1;
                 }
-                rects.add(rectangle);
+                rects[i][j] = rectangle;
                 x = x + 45;
             }
         }
