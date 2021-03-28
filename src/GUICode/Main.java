@@ -67,10 +67,7 @@ public class Main extends Application {
     private boolean turnHuman = true;
 
     private char[] cmpTray = new char[7];
-    //private static
-
     private int lastTile = 0;
-
     private Transpose trans;
     protected BoardObject[][] transBoard;
 
@@ -103,7 +100,6 @@ public class Main extends Application {
 
         //System.out.println("THIS IS THE SIZE: " + rects.size());
         for (int j = 0; j < rects.size(); j++) {
-
             layout.getChildren().addAll(rects.get(j));
         }
         for (int i = 0; i < 7; i++) {
@@ -183,16 +179,17 @@ public class Main extends Application {
                 int half = (firstIndices / 2);
                 if (Row.contains(half) && Col.contains(half)) {
                     getString();
-                    firstMove = false;
-                    //thisMove.clear();
-                    //Row.clear();
-                    // Col.clear();
                 } else {
                     ifClear();
                 }
 
             }else{
-
+                //first get the input such as the strings and stuff
+                //calculate new anchor points
+                //check if tile is placed on any of the anchors
+                //if so then
+                System.out.println("second human turn");
+                humanMove();
             }
         }
         if (!turnHuman) {
@@ -279,6 +276,32 @@ public class Main extends Application {
         }
     }
 
+    private void humanMove(){
+        //check if the first row and column make an anchor point
+        //if they are anchors then get the letter from left and right
+        //get the letter from top and bottom
+        //do the same from all other newly placed letters get their top bottom
+        // and left right don't worry because anchor will get it
+        //pass each of the strings to the dictionary to check if they are valid words
+        //if they are valid words then add them to the board and scoring
+
+        String temp = "";
+        for(char c: tray){
+            temp+=c;
+        }
+
+        GUILogic logic12 = new GUILogic(read.dictEdit, boards, tile, read, temp);
+        logic12.ankerPoints();
+        System.out.println("the size of row: "+Row.size());
+        System.out.println("the size of anchor points: "+logic12.ankers.size());
+        for(int row: Row){
+            System.out.println("");
+        }
+
+
+
+    }
+
     private void updateCompStr(String cmp, String best) {
         char[] cmp1 = cmp.toCharArray();
         char[] best1 = best.toCharArray();
@@ -311,19 +334,17 @@ public class Main extends Application {
     private void getString() {
         boolean rowsEqual = false;
         boolean colsEqual = false;
-        // System.out.println("before first for loop");
-        for (int i = 0; i < Row.size() - 1; i++) {
 
+        for (int i = 0; i < Row.size() - 1; i++) {
             if (Row.get(i) == Row.get(i + 1)) {
                 rowsEqual = true;
             } else {
                 rowsEqual = false;
                 break;
-
             }
         }
 
-        //System.out.println("before second for loop");
+
         for (int i = 0; i < Col.size() - 1; i++) {
             if (Col.get(i) == Col.get(i + 1)) {
                 colsEqual = true;
@@ -333,9 +354,7 @@ public class Main extends Application {
             }
         }
 
-
         if (rowsEqual) {
-            //System.out.println("rowsequal");
             boolean test = false;
             String str = "";
             for (int i = 0; i < Col.size() - 1; i++) {
@@ -348,6 +367,7 @@ public class Main extends Application {
                 } else {
                     test = false;
                     wrongMove();
+                    resetBookeping();
                     break;
                 }
             }
@@ -362,9 +382,12 @@ public class Main extends Application {
                     updateGui();
                     updateTray();
                     refreshTray();
+                    resetBookeping();
+                    firstMove=false;
                     turnHuman = false;
                 } else {
                     wrongMove();
+                    resetBookeping();
                 }
             }
         } else if (colsEqual) {
@@ -381,6 +404,7 @@ public class Main extends Application {
                 } else {
                     test1 = false;
                     wrongMove();
+                    resetBookeping();
                     return;
                 }
 
@@ -390,22 +414,31 @@ public class Main extends Application {
                     }
 
                     if (read.dictEdit.isWord(str1, read.getRoot())) {
-                        //  System.out.println("this is correct word");
-                        // System.out.println("this is string: "+str1);
                         updateBoard(str1);
                         updateGui();
                         updateTray();
                         refreshTray();
+                        resetBookeping();
+                        firstMove=false;
                         turnHuman = false;
 
                     } else {
                         wrongMove();
+                        resetBookeping();
                     }
                 }
             }
         } else if (!rowsEqual && !colsEqual) {
             wrongMove();
+            resetBookeping();
         }
+    }
+
+    private void resetBookeping(){
+        Row.clear();
+        Col.clear();
+        thisMove.clear();
+        usedIndices.clear();
     }
 
     private void wrongMove() {
@@ -436,6 +469,8 @@ public class Main extends Application {
 
                 if (boards.board[i][j].getLetter() != '0') {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetter()));
+                    rects.get(i).setFill(Color.BLACK);
+
                 } else if (boards.board[i][j].getLetterMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
                 } else if (boards.board[i][j].getWordMult() != 0) {
@@ -644,6 +679,7 @@ public class Main extends Application {
                     String num = rect.getAccessibleHelp();
 
                     if (swap) {
+                        System.out.println("in swap: ");
                         if (swapLetters.contains(Integer.valueOf(num))) {
                             int val = Integer.valueOf(num);
                             int y = (int) (tiles.get(val).getY());
