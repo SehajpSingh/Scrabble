@@ -74,6 +74,8 @@ public class Main extends Application {
 
     private int anchorRow;
     private int anchorCol;
+    private int startRow;
+    private int startCol;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -289,7 +291,7 @@ public class Main extends Application {
         //get the letter from top and bottom
         //do the same from all other newly placed letters get their top bottom
         // and left right don't worry because anchor will get it
-        //pass each of the strings to the dictionary to check if they are valid words
+        //pass each of the strings to the dictionary to check if they are valid words --done
         //if they are valid words then add them to the board and scoring
 
 
@@ -305,18 +307,37 @@ public class Main extends Application {
         }
         // check if rows and cols are connected
         else {
-            System.out.println("the are connected");
-            System.out.println("best Row: " + anchorRow);
-            System.out.println("anchors col: " + anchorCol);
+           // System.out.println("the are connected");
+           // System.out.println("best Row: " + anchorRow);
+          //  System.out.println("anchors col: " + anchorCol);
             String sol = leftString();
-            if (read.dictEdit.isWord(sol, read.getRoot())) {
-                System.out.println("the word is correct:" + sol);
-            }
-
             String sol1 = upString();
-            if (read.dictEdit.isWord(sol1, read.getRoot())) {
-                System.out.println("the word is correct:" + sol1);
-            }
+
+           if((sol.length()>0) && (read.dictEdit.isWord(sol, read.getRoot()))){
+               System.out.println("correct move by human");
+               updateBoard("sehaj");
+               turnHuman=false;
+
+            }else{
+               System.out.println("wrong move by human");
+               wrongMove();
+               resetBookeping();
+           }
+
+           if((sol1.length()>0) && (read.dictEdit.isWord(sol1, read.getRoot()))){
+               System.out.println("correct move by human");
+            turnHuman=false;
+            }else{
+               System.out.println("wrong move by human");
+               wrongMove();
+               resetBookeping();
+           }
+
+
+
+            //if (read.dictEdit.isWord(sol1, read.getRoot())) {
+            //    System.out.println("the word is correct:" + sol1);
+            //}
 
         }
 
@@ -403,7 +424,7 @@ public class Main extends Application {
     private String leftString() {
         tempBoard = boards.board;
         updateTempBoard();
-        System.out.println("temp board after printing");
+       // System.out.println("temp board after printing");
         logic.printBoard2(tempBoard);
 
         boolean run = true;
@@ -411,13 +432,26 @@ public class Main extends Application {
         int col = anchorCol;
         String temp = "";
 
+        boolean start=false;
+        int startR;
+        int startC;
+
         while (run) {
-            System.out.println("inside the left loop");
-            System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
+          //  System.out.println("inside the left loop");
+           // System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
 
             System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
+
+            if ((col > 0 && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
+                startRow=anchorRow;
+                startCol=col;
+                startR=anchorRow;
+                startC=col;
+                start=true;
+            }
+
             if (col > 0 && tempBoard[anchorRow][col].getLetter() != '0') {
-                System.out.println("inside left");
+              //  System.out.println("inside left");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col--;
             } else {
@@ -434,24 +468,33 @@ public class Main extends Application {
         temp = ans;
         System.out.println("THIS IS LEFT STRING: " + temp);
 
-        if (temp.length() > 1) {
+        if (temp.length() > 0) {
             col = anchorCol + 1;
         } else {
             col = anchorCol;
         }
 
         while (run1) {
-            System.out.println("inside the right loop");
+        //    System.out.println("inside the right loop");
             System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
+
+            if ((col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
+                startRow=anchorRow;
+                startCol=col;
+                startR=anchorRow;
+                startC=col;
+                start=true;
+            }
+
             if (col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') {
-                System.out.println("inside right");
+           //     System.out.println("inside right");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col++;
             } else {
                 run1 = false;
             }
         }
-        System.out.println("this is the string: " + temp);
+        System.out.println("this is the left+right string: " + temp);
         return temp;
     }
 
@@ -461,13 +504,26 @@ public class Main extends Application {
         int row = anchorRow;
         String temp = "";
 
+        boolean start=false;
+        int startR;
+        int startC;
+
         while (run) {
             // System.out.println("inside the left loop");
             // System.out.println("this is where we start: row : "+anchorRow+" col: "+row);
 
             System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+
+            if ((row > 0 && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
+                startRow=row;
+                startCol=anchorCol;
+                startR=row;
+                startC=anchorCol;
+                start=true;
+            }
+
             if (row > 0 && tempBoard[row][anchorCol].getLetter() != '0') {
-                System.out.println("inside up");
+               // System.out.println("inside up");
                 temp += tempBoard[row][anchorCol].getLetter();
                 row--;
             } else {
@@ -484,7 +540,7 @@ public class Main extends Application {
         temp = ans;
         System.out.println("THIS IS Up STRING: " + temp);
 
-        if (temp.length() > 1) {
+        if (temp.length() > 0) {
             row = anchorRow + 1;
         } else {
             row = anchorRow;
@@ -492,10 +548,19 @@ public class Main extends Application {
 
 
         while (run1) {
-            System.out.println("inside the bottom loop");
+           // System.out.println("inside the bottom loop");
             System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+
+            if ((row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
+                startRow=row;
+                startCol=anchorCol;
+                startR=row;
+                startC=anchorCol;
+                start=true;
+            }
+
             if (row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') {
-                System.out.println("inside bottom");
+             //   System.out.println("inside bottom");
                 temp += tempBoard[row][anchorCol].getLetter();
                 row++;
             } else {
