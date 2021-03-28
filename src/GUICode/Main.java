@@ -70,6 +70,7 @@ public class Main extends Application {
     private int lastTile = 0;
     private Transpose trans;
     protected BoardObject[][] transBoard;
+    protected BoardObject[][] origBoard;
     protected BoardObject[][] tempBoard;
 
     private int anchorRow;
@@ -157,8 +158,8 @@ public class Main extends Application {
     }
 
     private void okInstructions() {
-        ok.setLayoutX(10);
-        ok.setLayoutY(400);
+        ok.setLayoutX(80);
+        ok.setLayoutY(300);
         ok.setPrefSize(60, 10);
         ok.setText("OK");
         ok.setOnAction(this::handle);
@@ -171,8 +172,13 @@ public class Main extends Application {
             //System.out.println("singh is king");
         } else if (event.getSource() == Clear) {
             ifClear();
+            refreshTray();
         } else if (event.getSource() == Swap) {
-            swap = true;
+            if(turnHuman){
+                turnHuman=false;
+                swap = true;
+            }
+
         } else if (event.getSource() == ok) {
             swap = false;
             tradeTiles();
@@ -215,20 +221,15 @@ public class Main extends Application {
             logic.findPrefixfromTray();
             logic.getSuffixFromBoard();
             logic.getPrefixFromBoard();
-            //logic.printBoard1();
             int bestSocre = logic.getBestScore();
             String bestString = logic.getBestStr();
-            int besRow = logic.BestRow;
-            int bestCol = logic.BestCol;
-            //System.out.println("this is best score: " + bestSocre);
-            // System.out.println("this is best string: " + bestString);
+
 
             trans = new Transpose(boards.board);
             transBoard = new BoardObject[boards.boardSize][boards.boardSize];
-            // System.out.println("boardsize: "+ transBoard.length);
             transBoard = trans.transpose();
+            origBoard=boards.board;
             boards.board = transBoard;
-
             logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             logic1.ankerPoints();
             logic1.storeCrossChecks();
@@ -239,12 +240,11 @@ public class Main extends Application {
 
             int bestSocre1 = logic1.getBestScore();
             String bestString1 = logic1.getBestStr();
-            int besRow1 = logic1.BestRow;
-            int bestCol1 = logic1.BestCol;
             // System.out.println("this is best score 1 : " + bestSocre1);
             //System.out.println("this is best string 1 : " + bestString1);
 
             if (bestSocre >= bestSocre1) {
+                boards.board = origBoard;
                 System.out.println("normal board before update");
                 logic.printBoard();
                 int r = logic.bestRow;
@@ -854,10 +854,10 @@ public class Main extends Application {
                     a++;
                     usedIndices.remove(j);
 
-
                     if (boards.board[row][col].getLetterMult() == 0 && boards.board[row][col].getWordMult() == 0) {
                         //System.out.println("here");
                         labels[row][col].setText("0");
+
                     } else if (boards.board[row][col].getLetterMult() != 0 && boards.board[row][col].getWordMult() == 0) {
                         //System.out.println("here 1");
                         int name2 = boards.board[row][col].getLetterMult();
