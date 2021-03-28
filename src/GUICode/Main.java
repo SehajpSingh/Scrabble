@@ -65,6 +65,8 @@ public class Main extends Application {
     private static CreateGUIBoard boards;
     private static ReadFile read;
     private boolean turnHuman = true;
+
+    private char[] cmpTray = new char[7];
     //private static
 
     private int lastTile = 0;
@@ -172,102 +174,137 @@ public class Main extends Application {
         }
     }
 
-    private void ifPlay()  {
+    private void ifPlay() {
 
         if (turnHuman) {
             if (firstMove && Row.size() > 0 && Col.size() > 0) {
+                createCompTray();
                 int firstIndices = boards.boardSize;
                 int half = (firstIndices / 2);
                 if (Row.contains(half) && Col.contains(half)) {
                     getString();
                     firstMove = false;
-                    thisMove.clear();
-                    Row.clear();
-                    Col.clear();
+                    //thisMove.clear();
+                    //Row.clear();
+                    // Col.clear();
                 } else {
                     ifClear();
                 }
 
+            }else{
+
             }
         }
         if (!turnHuman) {
-            System.out.println("computer play");
-            logic = new GUILogic(read.dictEdit, boards, tile, read, "catfryb");
+            turnHuman = true;
+
+            String cmp = "";
+            for (char s : cmpTray) {
+                cmp += s;
+            }
+
+            logic = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             logic.ankerPoints();
             logic.storeCrossChecks();
             logic.findPrefixfromTray();
             logic.getSuffixFromBoard();
             logic.getPrefixFromBoard();
-            logic.printBoard1();
+            //logic.printBoard1();
 
             int bestSocre = logic.getBestScore();
             String bestString = logic.getBestStr();
             int besRow = logic.BestRow;
             int bestCol = logic.BestCol;
-            System.out.println("this is best score: " + bestSocre);
-            System.out.println("this is best string: " + bestString);
-
-            //CreateGUIBoard transGui = new CreateGUIBoard();
-            //transGui.readBoard();
-           // Transpose trans = new Transpose(boards.board);
-            //BoardObject[][] transBoard = trans.transpose();
-            //boards.board = boards.transBoard;
-
-            //call transpose at updated board not the blank board
-
-
+            //System.out.println("this is best score: " + bestSocre);
+            // System.out.println("this is best string: " + bestString);
 
             trans = new Transpose(boards.board);
             transBoard = new BoardObject[boards.boardSize][boards.boardSize];
-            System.out.println("boardsize: "+ transBoard.length);
+            // System.out.println("boardsize: "+ transBoard.length);
             transBoard = trans.transpose();
-            boards.board=transBoard;
+            boards.board = transBoard;
 
-            logic1 = new GUILogic(read.dictEdit, boards, tile, read, "satfryl");
+            logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             logic1.ankerPoints();
             logic1.storeCrossChecks();
             logic1.findPrefixfromTray();
             logic1.getSuffixFromBoard();
             logic1.getPrefixFromBoard();
-            logic1.printBoard1();
+            //logic1.printBoard1();
 
             int bestSocre1 = logic1.getBestScore();
             String bestString1 = logic1.getBestStr();
             int besRow1 = logic.BestRow;
             int bestCol1 = logic.BestCol;
-            System.out.println("this is best score 1 : " + bestSocre1);
-            System.out.println("this is best string 1 : " + bestString1);
+            // System.out.println("this is best score 1 : " + bestSocre1);
+            //System.out.println("this is best string 1 : " + bestString1);
 
-            if(bestSocre>=bestSocre1){
+            if (bestSocre >= bestSocre1) {
+                System.out.println("board before update");
                 logic.printBoard();
                 int r = logic.bestRow;
                 int c = logic.bestCol;
 
                 for (int l = 0; l < bestString.length(); l++) {
                     boards.board[r][c].setLetter(bestString.charAt(l));
+                    boards.board[r][c].setPlayed(true);
                     c++;
                 }
                 updateGui();
+                System.out.println("board after update");
                 logic.printBoard1();
+                updateCompStr(cmp, logic1.getBestStr());
 
                 //System.out.println("no transpose");
 
-            }else{
-                System.out.println("transpose board");
+            } else {
+                //System.out.println("transpose board");
                 int r1 = logic1.bestRow;
                 int c1 = logic1.bestCol;
-
+                System.out.println("transpose board before update");
+                logic1.printBoard();
                 for (int l = 0; l < bestString1.length(); l++) {
                     transBoard[r1][c1].setLetter(bestString1.charAt(l));
+                    boards.board[r1][c1].setPlayed(true);
                     c1++;
                 }
-                boards.board=transBoard;
+                BoardObject tempBoard[][] = transBoard;
+                Transpose trans = new Transpose(tempBoard);
+                boards.board = trans.transpose();
+                System.out.println("updated transpose board");
+                logic1.printBoard();
                 updateGui();
-                logic.printBoard1();
-
+                updateCompStr(cmp, logic1.getBestStr());
             }
+        }
+    }
 
+    private void updateCompStr(String cmp, String best) {
+        char[] cmp1 = cmp.toCharArray();
+        char[] best1 = best.toCharArray();
+        System.out.println("this is best String: " + best);
+        System.out.println("this is comp tray before: " + cmp);
 
+        for (int i = 0; i < cmp.length(); i++) {
+            for (int j = 0; j < best.length(); j++) {
+                if (i < cmp.length() && cmp1[i] == best1[j]) {
+                    System.out.println("yes they matched");
+                    System.out.println("this letter matched: " + cmp1[i] + " " + best1[j]);
+
+                    boolean validMov = false;
+                    while (!validMov) {
+                        Random rand = new Random();
+                        int rand_int1 = rand.nextInt(26);
+
+                        if (tile.tile[rand_int1].getFrequency() >= 1) {
+                            validMov = true;
+                            System.out.println("this is new letter: " + tile.tile[rand_int1].getLetter());
+                            cmpTray[i] = tile.tile[rand_int1].getLetter();
+                            tile.tile[rand_int1].withdrawLetter();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -298,7 +335,7 @@ public class Main extends Application {
 
 
         if (rowsEqual) {
-            System.out.println("rowsequal");
+            //System.out.println("rowsequal");
             boolean test = false;
             String str = "";
             for (int i = 0; i < Col.size() - 1; i++) {
@@ -324,6 +361,7 @@ public class Main extends Application {
                     updateBoard(str);
                     updateGui();
                     updateTray();
+                    refreshTray();
                     turnHuman = false;
                 } else {
                     wrongMove();
@@ -357,6 +395,7 @@ public class Main extends Application {
                         updateBoard(str1);
                         updateGui();
                         updateTray();
+                        refreshTray();
                         turnHuman = false;
 
                     } else {
@@ -391,7 +430,7 @@ public class Main extends Application {
     }
 
     private void updateGui() {
-        System.out.println("update gui called");
+        //System.out.println("update gui called");
         for (int i = 0; i < boards.boardSize; i++) {
             for (int j = 0; j < boards.boardSize; j++) {
 
@@ -402,20 +441,38 @@ public class Main extends Application {
                 } else if (boards.board[i][j].getWordMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getWordMult()));
                 }
-
-
             }
+        }
+    }
+
+    private void createCompTray() {
+        for (int i = 0; i < 7; i++) {
+
+            boolean validMov = false;
+
+            while (!validMov) {
+
+                Random rand = new Random();
+                int rand_int1 = rand.nextInt(26);
+
+                if (tile.tile[rand_int1].getFrequency() >= 1) {
+                    validMov = true;
+                    cmpTray[i] = tile.tile[rand_int1].getLetter();
+                    tile.tile[rand_int1].withdrawLetter();
+                }
+            }
+
+
         }
     }
 
     private void updateTray() {
 
-       // System.out.println("tray update called");
         for (int i = 0; i < thisMove.size(); i++) {
             int index = thisMove.get(i);
             boolean validMov = false;
 
-            while (validMov) {
+            while (!validMov) {
 
                 Random rand = new Random();
                 int rand_int1 = rand.nextInt(26);
@@ -423,15 +480,11 @@ public class Main extends Application {
                 if (tile.tile[rand_int1].getFrequency() >= 1) {
                     validMov = true;
                     tray[index] = tile.tile[rand_int1].getLetter();
-                    //System.out.println("this is letter: " + tile.tile[rand_int1].getLetter());
                     tile.tile[rand_int1].withdrawLetter();
                 }
             }
         }
 
-        for (int j = 0; j < tray.length; j++) {
-            tileLetter.get(j).setText(String.valueOf(tray[j]));
-        }
     }
 
     private void refreshTray() {
@@ -441,6 +494,7 @@ public class Main extends Application {
     }
 
     private void ifClear() {
+        System.out.println("if clear called");
         int a = 0;
         for (int i = 0; i < thisMove.size(); i++) {
             int ind = thisMove.get(i);
