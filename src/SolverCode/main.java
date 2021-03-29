@@ -5,7 +5,10 @@
 
 
 package SolverCode;
+
 import CommonCode.*;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class main {
@@ -15,6 +18,12 @@ public class main {
     private static CreateBoard board;
 
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+        if (args.length == 0) {
+            System.out.println("no files are given: ");
+        } else {
+            //File file = new File args[0];
+        }
+
 
         //setting up dictionary
         ReadFile read = new ReadFile();
@@ -77,7 +86,7 @@ public class main {
 
             } else {
 
-                BoardObject temp[][]= board.transPose.get(i);
+                BoardObject temp[][] = board.transPose.get(i);
                 System.out.println("Input Board:");
                 logic1.printBoard2(board.origBoards.get(i));
                 int r1 = logic1.bestRow;

@@ -194,7 +194,7 @@ public class Main extends Application {
                 //calculate new anchor points
                 //check if tile is placed on any of the anchors
                 //if so then
-                System.out.println("second human turn");
+                //System.out.println("second human turn");
                 humanMove();
             }
         }
@@ -202,7 +202,7 @@ public class Main extends Application {
     }
 
     private void cmpTurn(){
-        System.out.println("here in computer turn");
+       // System.out.println("here in computer turn");
         if (!turnHuman) {
             turnHuman = true;
 
@@ -241,7 +241,6 @@ public class Main extends Application {
 
             if (bestSocre >= bestSocre1) {
                 boards.board = origBoard;
-                System.out.println("normal board before update");
                 logic.printBoard();
                 int r = logic.bestRow;
                 int c = logic.bestCol;
@@ -252,7 +251,6 @@ public class Main extends Application {
                     c++;
                 }
                 updateGui();
-                System.out.println("normal board after update");
                 logic.printBoard1();
                 compScore += bestSocre;
                 comScor.setText("Computer Score: " + compScore);
@@ -264,7 +262,6 @@ public class Main extends Application {
                 //System.out.println("transpose board");
                 int r1 = logic1.bestRow;
                 int c1 = logic1.bestCol;
-                System.out.println("transpose board before update");
                 logic1.printBoard();
                 for (int l = 0; l < bestString1.length(); l++) {
                     transBoard[r1][c1].setLetter(bestString1.charAt(l));
@@ -274,7 +271,6 @@ public class Main extends Application {
                 BoardObject tempBoard[][] = transBoard;
                 Transpose trans = new Transpose(tempBoard);
                 boards.board = trans.transpose();
-                System.out.println("updated transpose board");
                 logic1.printBoard();
                 compScore = bestSocre1;
                 comScor.setText("Computer Score: " + compScore);
@@ -299,7 +295,6 @@ public class Main extends Application {
             String sol1 = upString();
 
             if ((sol.length() > 1) && (read.dictEdit.isWord(sol, read.getRoot()))) {
-                System.out.println("correct move by human on left+right");
                 updateBoard("sehaj");
                 turnHuman = false;
                 cmpTurn();
@@ -314,8 +309,6 @@ public class Main extends Application {
             }
 
             if ((sol1.length() > 1) && (read.dictEdit.isWord(sol1, read.getRoot()))) {
-                System.out.println("correct move by human on up+down");
-                //update board function
                 updateBoard("sehaj");
                 turnHuman = false;
                 cmpTurn();
@@ -327,7 +320,6 @@ public class Main extends Application {
             }
 
             if (!played) {
-                System.out.println("wrong move by the player");
                 reverseTempBoard();
                 wrongMove();
                 resetBookeping();
@@ -339,7 +331,6 @@ public class Main extends Application {
     }
 
     private void humanScore(String str){
-        System.out.println("human score called");
         int score=0;
         if(str.length()==7){
             score+=50;
@@ -450,7 +441,7 @@ public class Main extends Application {
             //  System.out.println("inside the left loop");
             // System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
 
-            System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
+           // System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
 
             if ((col > 0 && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
                 startRow = anchorRow;
@@ -476,7 +467,7 @@ public class Main extends Application {
         }
 
         temp = ans;
-        System.out.println("THIS IS LEFT STRING: " + temp);
+       // System.out.println("THIS IS LEFT STRING: " + temp);
 
         if (temp.length() > 0) {
             col = anchorCol + 1;
@@ -504,7 +495,7 @@ public class Main extends Application {
                 run1 = false;
             }
         }
-        System.out.println("this is the left+right string: " + temp);
+        //System.out.println("this is the left+right string: " + temp);
         return temp;
     }
 
@@ -522,7 +513,7 @@ public class Main extends Application {
             // System.out.println("inside the left loop");
             // System.out.println("this is where we start: row : "+anchorRow+" col: "+row);
 
-            System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+            //System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
 
             if ((row > 0 && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
                 startRow = row;
@@ -548,7 +539,7 @@ public class Main extends Application {
         }
 
         temp = ans;
-        System.out.println("THIS IS Up STRING: " + temp);
+        //System.out.println("THIS IS Up STRING: " + temp);
 
         if (temp.length() > 0) {
             row = anchorRow + 1;
@@ -559,7 +550,7 @@ public class Main extends Application {
 
         while (run1) {
             // System.out.println("inside the bottom loop");
-            System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
+           // System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
 
             if ((row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
                 startRow = row;
@@ -577,7 +568,7 @@ public class Main extends Application {
                 run1 = false;
             }
         }
-        System.out.println("this is the up string complete: " + temp);
+       // System.out.println("this is the up string complete: " + temp);
         return temp;
 
     }
