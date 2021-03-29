@@ -19,9 +19,9 @@ public class ReadFile {
      * this functions reads the given file and stores it
      * @throws FileNotFoundException
      */
-    public void readFile() throws FileNotFoundException {
+    public void readFile(File file) throws FileNotFoundException {
 
-        File file = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
+        //File file = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
         Scanner scnr = new Scanner(file);
 
         int lineNumber = 1;

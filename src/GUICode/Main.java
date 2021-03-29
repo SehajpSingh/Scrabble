@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -70,16 +71,24 @@ public class Main extends Application {
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
-        read.readFile();
+        File file;
 
-        boards = new CreateGUIBoard();
-        boards.readBoard();
+        if (args.length == 0) {
+            System.out.println("no dictionary files are given: ");
+        } else {
+            //File file = new File args[0];
+            file = new File(args[0]);
+            read.readFile(file);
+            // read.readFile();
+            boards = new CreateGUIBoard();
+            boards.readBoard();
 
-        tile = new createTile();
-        tile.tiles();
-        tile.trays();
+            tile = new createTile();
+            tile.tiles();
+            tile.trays();
 
-        launch(args);
+            launch(args);
+        }
     }
 
     public void start(Stage primaryStage) throws Exception {
