@@ -319,7 +319,7 @@ public class Main extends Application {
         // check if rows and cols are connected
         else {
 
-            boolean played = true;
+            boolean played = false;
             String sol = leftString();
             String sol1 = upString();
 
@@ -340,6 +340,7 @@ public class Main extends Application {
             if ((sol1.length() > 1) && (read.dictEdit.isWord(sol1, read.getRoot()))) {
                 System.out.println("correct move by human on up+down");
                 //update board function
+                updateBoard("sehaj");
                 turnHuman = false;
                 cmpTurn();
                 played = true;
@@ -349,6 +350,7 @@ public class Main extends Application {
             }
 
             if (!played) {
+                System.out.println("wrong move by the player");
                 reverseTempBoard();
                 wrongMove();
                 resetBookeping();
