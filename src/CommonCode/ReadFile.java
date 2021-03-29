@@ -1,21 +1,26 @@
+/**
+ * Sehaj Punit Singh
+ * this class reads the dictionary and uses it
+ */
+
 package CommonCode;
-
-import CommonCode.Dictionary;
-import CommonCode.DictionaryEdit;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ReadFile {
-
+    /**
+     * dictionary edit is the blueprint for creating and storing the dictionary
+     */
    public DictionaryEdit dictEdit = new DictionaryEdit();
-    private Dictionary root = new Dictionary();
+   private Dictionary root = new Dictionary();
 
-
+    /**
+     * this functions reads the given file and stores it
+     * @throws FileNotFoundException
+     */
     public void readFile() throws FileNotFoundException {
 
-        //File file = new File("/Users/sehajpunitsingh/Desktop/animal.txt");
         File file = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
         Scanner scnr = new Scanner(file);
 
@@ -23,17 +28,16 @@ public class ReadFile {
         while (scnr.hasNextLine()) {
             String line = scnr.nextLine();
 
-            //System.out.println("line " + lineNumber + " :" + line);
             dictEdit.addWords(line, root);
-
-            //System.out.println(dictEdit.isWord(line, root));
-            //if (lineNumber == 140) {
-               // break;
-            //}
             lineNumber++;
 
         }
     }
+
+    /**
+     * this function finds the root for the file
+     * @return
+     */
     public Dictionary getRoot(){
         return root;
     }

@@ -1,5 +1,9 @@
-package SolverCode;
+/**
+ * Sehaj Punit Singh
+ * This class defines the blueprint for solver code
+ */
 
+package SolverCode;
 import CommonCode.BoardObject;
 import CommonCode.Transpose;
 
@@ -10,14 +14,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CreateBoard {
-    //read the file and store in array as in last file
-    // create a board of appropriate size
-    //create the board object blueprint
-    //assigning the multiplier to each board object and see the asci value
-
-
+    /**
+     * These variables are used for board realted book keeping
+     */
     public BoardObject board[][];
-    //public BoardObject transbBoard[][];
     public ArrayList<BoardObject[][]> boards = new ArrayList<BoardObject[][]>();
     public ArrayList<BoardObject[][]> origBoards = new ArrayList<BoardObject[][]>();
     public ArrayList<BoardObject[][]> transPose = new ArrayList<BoardObject[][]>();
@@ -27,6 +27,11 @@ public class CreateBoard {
     //delete
     Transpose trans;
 
+    /**
+     * This function creates the board
+     * @throws FileNotFoundException
+     * @throws InterruptedException
+     */
     public void create() throws FileNotFoundException, InterruptedException {
 
         int lines;
@@ -100,6 +105,10 @@ public class CreateBoard {
         }
 
     }
+
+    /**
+     * This function prints the board
+     */
     public void printBoard() {
         int loop = board.length;
         System.out.println();

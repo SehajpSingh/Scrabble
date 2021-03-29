@@ -1,7 +1,12 @@
+/**
+ * Sehaj Punit Singh
+ * This is the main class for solver
+ */
+
+
 package SolverCode;
 import CommonCode.*;
 import java.io.FileNotFoundException;
-
 
 public class main {
 

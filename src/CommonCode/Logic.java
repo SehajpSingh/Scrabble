@@ -1,11 +1,13 @@
+/**
+ * Sehaj Punit Singh
+ * This is Logic class and handles all the logic for computer move.
+ * It generates the best possible move for the computer and calculates the score.
+ */
 package CommonCode;
-
 import SolverCode.CreateBoard;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 
 public class Logic {
     private DictionaryEdit dictionaryEdit;
@@ -33,14 +35,30 @@ public class Logic {
     private String bestStr = "";
     private String leftOver = "";
 
+    /**
+     * getter for the best string
+     * @return returns the best string
+     */
     public String getBestStr() {
         return bestStr;
     }
 
+    /**
+     * getter for the best score
+     * @return returns the best score
+     */
     public int getBestScore() {
         return bestScore;
     }
 
+    /**
+     * the constructor for the logic and takes the essential parameters
+     * @param dictionaryEdit
+     * @param createBoard
+     * @param tile
+     * @param file
+     * @param tray
+     */
     public Logic(DictionaryEdit dictionaryEdit, CreateBoard createBoard, createTile tile, ReadFile file, String tray) {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
@@ -50,9 +68,11 @@ public class Logic {
         storeRefs = new Object[createBoard.board.length][createBoard.board.length];
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard() {
         int loop = createBoard.board.length;
-
 
 
         System.out.println();
@@ -79,6 +99,9 @@ public class Logic {
 
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard1() {
         int loop = createBoard.board.length;
         System.out.println();
@@ -103,6 +126,9 @@ public class Logic {
 
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard2(BoardObject boards[][]) {
         int loop = boards.length;
         System.out.println();
@@ -127,6 +153,9 @@ public class Logic {
 
     }
 
+    /**
+     * generates the anker points for board
+     */
     public void ankerPoints() {
 
         int loop = createBoard.board.length;
@@ -160,6 +189,9 @@ public class Logic {
 
     }
 
+    /**
+     * generates the croosschecks
+     */
     public void storeCrossChecks() {
         for (int i = 0; i < ankers.size(); i++) {
 
@@ -212,7 +244,7 @@ public class Logic {
 
                     if (dictionaryEdit.isWord(temp, readFile.getRoot())) {
                         ankers.get(i).addChar((char) ascii);
-                        //System.out.println("VALID WORD "+temp);
+
                     }
                 }
             } else if (strPrefix.length() > 0 && strSufix.length() > 0) {
@@ -222,7 +254,7 @@ public class Logic {
 
                     if (dictionaryEdit.isWord(temp.toLowerCase(), readFile.getRoot())) {
                         ankers.get(i).addChar((char) ascii);
-                        //System.out.println("VALID WORD "+temp);
+
                     }
                 }
             }
@@ -230,6 +262,9 @@ public class Logic {
         }
     }
 
+    /**
+     * finds the prefix for the word from given tray
+     */
     public void findPrefixfromTray() {
 
         //tray = "ntnbtoi";
@@ -269,10 +304,16 @@ public class Logic {
             permutation("", (String) value.next());
         }
         Iterator val = allPrefix.iterator();
-        //System.out.println("this is combination " + allPrefix.size());
+
 
     }
 
+    /**
+     * generates the combinations for the prefix
+     * @param prefix
+     * @param s
+     * @param hashSet
+     */
     private void combination(String prefix, String s, HashSet hashSet) {
         int N = s.length();
         hashSet.add(prefix);
@@ -281,12 +322,17 @@ public class Logic {
             combination(prefix + s.charAt(i), s.substring(i + 1), hashSet);
     }
 
+    /**
+     * generates the premutations for the prefix
+     * @param prefix
+     * @param s
+     */
     private void permutation(String prefix, String s) {
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isPrefix(prefix, readFile.getRoot())) {
                 allPrefix.add(prefix);
-                //System.out.println("here is :"+prefix);
+
             }
         }
 
@@ -299,13 +345,16 @@ public class Logic {
         }
     }
 
+    /**
+     * gets the suffix or left part of the word
+     */
     public void getSuffixFromBoard() {
         //1. make sure the left of anker is empty
 
         for (int i = 0; i < ankers.size(); i++) {
             int col = ankers.get(i).getCol();
             int row = ankers.get(i).getRow();
-            //System.out.println("row "+row + "col " + col);
+
             if ((col > 0 && !(createBoard.board[row][col - 1].getPlayedStatus())) || col == 0) {
 
                 Iterator value = allPrefix.iterator();
@@ -354,7 +403,7 @@ public class Logic {
                                             leftOver = leftOver.replaceFirst("" + prefix.charAt(a), "");
 
                                         }
-                                        //System.out.println("used = "+prefix+" leftover= "+leftOver+" "+(prefix.length()+leftOver.length()));
+
                                         if (leftOver.length() > 0) {
 
                                             combination("", leftOver, suffixFromBoardTray);
@@ -363,7 +412,6 @@ public class Logic {
                                             while (value1.hasNext()) {
                                                 String test = (String) value1.next();
 
-                                                //  System.out.println("leftOverPerm " + test + "     usedLetters:  " + prefix + " " + strSufix);
                                                 permutationfromTray(firstLetterRow, firstLetterCol, prefix + strSufix, test);
                                             }
                                             suffixFromBoardTray.clear();
@@ -374,7 +422,7 @@ public class Logic {
                                         rand1 = false;
                                     }
                                 }
-                                //System.out.println("foundword    "+prefix+" "+strSufix);
+
                             } else {
                                 break;
                             }
@@ -387,6 +435,9 @@ public class Logic {
         leftOver = "";
     }
 
+    /**
+     * gets the prefix or left part from board
+     */
     public void getPrefixFromBoard() {
         for (int i = 0; i < ankers.size(); i++) {
             int col = ankers.get(i).getCol();
@@ -405,7 +456,7 @@ public class Logic {
                         rand = false;
                     }
                 }
-                //System.out.println("prefix from board "+strPrefix);
+
                 Iterator value = prefixes.iterator();
                 while (value.hasNext()) {
                     permutationfromTrayone(row, col, strPrefix, (String) value.next());
@@ -416,6 +467,13 @@ public class Logic {
 
     }
 
+    /**
+     * calculates the score for board
+     * @param row
+     * @param col
+     * @param str
+     * @return
+     */
     public int calcScore(int row, int col, String str) {
         int tempCol = col;
         int tempRow = row;
@@ -460,7 +518,7 @@ public class Logic {
             }
             if (createBoard.board[row][tempCol].getWordMult() != 0) {
                 wordMulti = wordMulti * createBoard.board[row][tempCol].getWordMult();
-                //System.out.println("this is wordMulti: " +wordMulti);
+
             }
             if (createBoard.board[row][tempCol].getLetterMult() == 0) {
 
@@ -557,8 +615,6 @@ public class Logic {
             totalScore += wordScore;
 
         }
-        //System.out.println("this is the final score: "+totalScore + "  ");
-
 
         if (totalScore > bestScore) {
             if (col - 1 >= 0 && createBoard.board[row][col - 1].getPlayedStatus()) {
@@ -568,19 +624,24 @@ public class Logic {
             bestCol = col;
             bestRow = row;
             bestStr = str;
-            System.out.println("best score: " + bestScore + " bestRow: " + bestRow + " bestCol: " + bestCol + " bestStr " + bestStr);
 
         }
         return totalScore;
     }
 
+    /**
+     * genereates the premuations
+     * @param row
+     * @param col
+     * @param prefix
+     * @param s
+     */
     private void permutationfromTrayone(int row, int col, String prefix, String s) {
 
         int N = s.length();
         if (N == 0) {
             if (dictionaryEdit.isWord(prefix, readFile.getRoot())) {
                 prefixBoardSuffixTray.add(prefix);
-
 
                 if (col + prefix.length() < createBoard.board.length) {
                     calcScore(row, col, prefix);
@@ -597,6 +658,13 @@ public class Logic {
         }
     }
 
+    /**
+     * generates the permutations
+     * @param row
+     * @param col
+     * @param prefix
+     * @param s
+     */
     private void permutationfromTray(int row, int col, String prefix, String s) {
         int N = s.length();
         if (N == 0) {
@@ -607,9 +675,6 @@ public class Logic {
 
                     calcScore(row, col, prefix);
                 }
-
-                //System.out.println("this is the word " + prefix + " with row "+row + " with col" + col);
-                //System.out.println("1 here is : " + prefix);
             }
         }
 

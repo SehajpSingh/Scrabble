@@ -1,8 +1,11 @@
+/**
+ * Sehaj Punit Singh
+ * This class creates the board for gui after reading the input file
+ */
 package GUICode;
 import CommonCode.BoardObject;
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import java.util.Scanner;
 
 public class CreateGUIBoard {
@@ -21,10 +24,10 @@ public class CreateGUIBoard {
     public CreateGUIBoard() throws FileNotFoundException {
     }
 
-    //protected void createBoard(int word_Mult, int letter_mult, char letter, boolean played) throws FileNotFoundException {
-       // BoardObject guiBoard = new BoardObject(word_Mult, letter_mult, letter, played);
-   // }
 
+    /**
+     * This function reads the file
+     */
     protected void readBoard() {
 
         for (int i = 0; i < boardSize; i++) {
@@ -44,7 +47,6 @@ public class CreateGUIBoard {
 
                 }
             }
-
 
         }
 

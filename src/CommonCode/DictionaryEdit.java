@@ -1,11 +1,11 @@
+/**
+ * Sehaj Punit Singh
+ * This class uses the dictionary class and implements the dictionary
+ */
 package CommonCode;
-
-import CommonCode.Dictionary;
-
 import java.util.ArrayList;
 
 public class DictionaryEdit {
-
 
     protected ArrayList<String> perms = new ArrayList<>();
     protected Dictionary tree = new Dictionary();
@@ -24,6 +24,12 @@ public class DictionaryEdit {
         tree.setLeaf();
     }
 
+    /**
+     * This function checks if a given String is a valid word
+     * @param str string that needs to be checked if valid
+     * @param root root of tree to be checked in
+     * @return returns the status of the string if its a word or not
+     */
     public boolean isWord(String str, Dictionary root) {
         int len = str.length();
         int position;
@@ -42,6 +48,12 @@ public class DictionaryEdit {
         return isFound;
     }
 
+    /**
+     * This function checks if the strinn is a prefix of word or not
+     * @param str string that needs to be compared and checked
+     * @param root the root where to check if its a root
+     * @return returns the status of the prefix
+     */
     public boolean isPrefix(String str, Dictionary root){
         int len = str.length();
         int position;

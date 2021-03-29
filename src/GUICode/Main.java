@@ -1,5 +1,9 @@
-package GUICode;
+/**
+ * Sehaj Punit Singh
+ * This handles the main function for GUI
+ */
 
+package GUICode;
 import CommonCode.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -20,39 +24,27 @@ import java.util.Random;
 public class Main extends Application {
 
     private Pane layout = new Pane();
-
-    //board
     private Rectangle[][] rects = new Rectangle[15][15];
     private Label[][] labels = new Label[15][15];
-
-    //tiles book-keeping
     private char[] tray = new char[7];
     private ArrayList<Rectangle> tiles = new ArrayList<>();
     private ArrayList<Label> tileLetter = new ArrayList<>();
     private ArrayList<Integer> usedIndices = new ArrayList<>();
     private ArrayList<Integer> thisMove = new ArrayList<>();
-
-    //row and col of the tile clicked
     private ArrayList<Integer> Row = new ArrayList<>();
     private ArrayList<Integer> Col = new ArrayList<>();
-
-    //stores the letters to be swapped
     private ArrayList<Integer> swapLetters = new ArrayList<>();
     private GUILogic logic;
     private GUILogic logic1;
-
-
     private Button Play = new Button();
     private Button Pass = new Button();
     private Button Clear = new Button();
     private Button Swap = new Button();
     private Button ok = new Button();
-
     private Rectangle scoreBoard;
     private boolean swap;
     private boolean tileClicked;
     private boolean firstMove = true;
-
     private Label label;
     private Label name1;
     private Label humScor;
@@ -60,20 +52,16 @@ public class Main extends Application {
     private Label trayLetter;
     private String tileText;
     private int tileClickedNum;
-
     protected static createTile tile;
     private static CreateGUIBoard boards;
     private static ReadFile read;
     private boolean turnHuman = true;
-
     private char[] cmpTray = new char[7];
     private int lastTile = 0;
     private Transpose trans;
     protected BoardObject[][] transBoard;
     protected BoardObject[][] origBoard;
     protected BoardObject[][] tempBoard;
-
-
     private int anchorRow;
     private int anchorCol;
     private int startRow;
@@ -297,14 +285,6 @@ public class Main extends Application {
     }
 
     private void humanMove() {
-        //check if the first row and column make an anchor point --done
-        //check if letters are connected --done
-        //if they are anchors then get the letter from left and right--done from left and right
-        //get the letter from top and bottom
-        //do the same from all other newly placed letters get their top bottom
-        // and left right don't worry because anchor will get it
-        //pass each of the strings to the dictionary to check if they are valid words --done
-        //if they are valid words then add them to the board and scoring
 
 
         if (!anchorsCheck()) {
@@ -312,12 +292,6 @@ public class Main extends Application {
             resetBookeping();
         }
 
-        // if (Row.size() > 1 && !ifConnected()) {
-        // wrongMove();
-        // resetBookeping();
-        //System.out.println("they are not connected");
-        //}
-        // check if rows and cols are connected
         else {
 
             boolean played = false;
@@ -379,7 +353,6 @@ public class Main extends Application {
         humScor.setText("Human Score: " + score);
 
     }
-
 
     private boolean ifConnected() {
 
@@ -1016,12 +989,6 @@ public class Main extends Application {
         int y = 850;
         for (int i = 0; i < 7; i++) {
             trayLetter = new Label();
-
-            //out of bounds exception sometimes index 6 out of length of for 6]
-            //there were duplicates last time when there was error [q, w, a, h, h, p] and next to each other otherwise duplicates are fine
-            //[h, c, t, r, s, z]
-            //System.out.println("THIS IS THE TRAY: " + tile.tray);
-            // System.out.println("THIS IS THE TRAY length: " + tile.tray.size());
             String name2 = String.valueOf(tile.tray.get(i));
             tray[i] = name2.charAt(0);
             trayLetter.setText(name2);

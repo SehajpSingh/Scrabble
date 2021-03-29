@@ -1,5 +1,9 @@
+/**
+ * Sehaj Punit Singh
+ * This is Logic class and handles all the logic for computer move.
+ * It generates the best possible move for the computer and calculates the score.
+ */
 package GUICode;
-
 import CommonCode.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,14 +36,30 @@ public class GUILogic {
     private String bestStr = "";
     private String leftOver = "";
 
+    /**
+     * getter for the best string
+     * @return returns the best string
+     */
     public String getBestStr() {
         return bestStr;
     }
 
+    /**
+     * getter for the best score
+     * @return returns the best score
+     */
     public int getBestScore() {
         return bestScore;
     }
 
+    /**
+     * the constructor for the logic and takes the essential parameters
+     * @param dictionaryEdit
+     * @param createBoard
+     * @param tile
+     * @param file
+     * @param tray
+     */
     public GUILogic(DictionaryEdit dictionaryEdit, CreateGUIBoard createBoard, createTile tile, ReadFile file, String tray) {
         this.dictionaryEdit = dictionaryEdit;
         this.createBoard = createBoard;
@@ -51,6 +71,9 @@ public class GUILogic {
         //printBoard();
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard() {
         int loop = createBoard.board.length;
         System.out.println();
@@ -77,6 +100,9 @@ public class GUILogic {
 
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard1() {
         int loop = createBoard.board.length;
         System.out.println();
@@ -101,6 +127,9 @@ public class GUILogic {
 
     }
 
+    /**
+     * prints the board
+     */
     public void printBoard2(BoardObject boards[][]) {
         int loop = boards.length;
         System.out.println();
@@ -125,6 +154,9 @@ public class GUILogic {
 
     }
 
+    /**
+     * generates the anker points for board
+     */
     public void ankerPoints() {
 
         int loop = createBoard.board.length;
@@ -161,6 +193,9 @@ public class GUILogic {
 
     }
 
+    /**
+     * generates the croosschecks
+     */
     public void storeCrossChecks() {
 
         for (int i = 0; i < ankers.size(); i++) {
@@ -232,6 +267,9 @@ public class GUILogic {
         }
     }
 
+    /**
+     * finds the prefix for the word from given tray
+     */
     public void findPrefixfromTray() {
 
         //tray = "ntnbtoi";
@@ -275,6 +313,12 @@ public class GUILogic {
 
     }
 
+    /**
+     * generates the combinations for the prefix
+     * @param prefix
+     * @param s
+     * @param hashSet
+     */
     private void combination(String prefix, String s, HashSet hashSet) {
         int N = s.length();
         hashSet.add(prefix);
@@ -283,6 +327,11 @@ public class GUILogic {
             combination(prefix + s.charAt(i), s.substring(i + 1), hashSet);
     }
 
+    /**
+     * generates the premutations for the prefix
+     * @param prefix
+     * @param s
+     */
     private void permutation(String prefix, String s) {
         int N = s.length();
         if (N == 0) {
@@ -301,6 +350,9 @@ public class GUILogic {
         }
     }
 
+    /**
+     * gets the suffix or left part of the word
+     */
     public void getSuffixFromBoard() {
 
         //1. make sure the left of anker is empty
@@ -390,6 +442,9 @@ public class GUILogic {
         leftOver = "";
     }
 
+    /**
+     * gets the prefix or left part from board
+     */
     public void getPrefixFromBoard() {
         for (int i = 0; i < ankers.size(); i++) {
             int col = ankers.get(i).getCol();
@@ -420,6 +475,13 @@ public class GUILogic {
 
     }
 
+    /**
+     * calculates the score for board
+     * @param row
+     * @param col
+     * @param str
+     * @return
+     */
     public int calcScore(int row, int col, String str) {
         int tempCol = col;
         int tempRow = row;
@@ -578,6 +640,13 @@ public class GUILogic {
         return totalScore;
     }
 
+    /**
+     * genereates the premuations
+     * @param row
+     * @param col
+     * @param prefix
+     * @param s
+     */
     private void permutationfromTrayone(int row, int col, String prefix, String s) {
         //System.out.println("INSIDE PERM FROM TRAY ONE: ");
         int N = s.length();
@@ -601,6 +670,13 @@ public class GUILogic {
         }
     }
 
+    /**
+     * generates the permutations
+     * @param row
+     * @param col
+     * @param prefix
+     * @param s
+     */
     private void permutationfromTray(int row, int col, String prefix, String s) {
         int N = s.length();
         if (N == 0) {

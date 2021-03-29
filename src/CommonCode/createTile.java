@@ -1,5 +1,10 @@
-package CommonCode;
+/**
+ * Sehaj Punit Singh
+ * This class creates the tiles by reading the tile input file
+ * It uses the tile object format
+ */
 
+package CommonCode;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,16 +13,25 @@ import java.util.Scanner;
 
 public class createTile {
 
+    /**
+     * This tile array is storing the basics for each of the
+     * letters given in the tile object
+     */
     public TileObject tile[] = new TileObject[27];
 
+    /**
+     * This arraylist stores the first tile tray for the human player
+     */
     public ArrayList<Character> tray = new ArrayList<Character>();
 
+    /**
+     * This program reads the file for tray and creates the tiles
+     * @throws FileNotFoundException this exception is thrown if file path is incorrect
+     */
     public void tiles() throws FileNotFoundException {
         int tileIndex = 0;
         File file = new File("./resources/tiles.txt");
         Scanner scnr = new Scanner(file);
-
-        //Reading each line of file using Scanner class
         int lineNumber = 1;
 
         while (scnr.hasNextLine()) {
@@ -34,9 +48,12 @@ public class createTile {
         }
     }
 
+    /**
+     * This function creates the tray for the human player
+     */
     public void trays() {
         int size = tray.size();
-        //for (int i = size; i < 7; i++)
+
         while (size < 7) {
             Random rand = new Random();
             int rand_int1 = rand.nextInt(26);

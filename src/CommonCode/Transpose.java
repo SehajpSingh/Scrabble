@@ -1,18 +1,30 @@
+/**
+ * Sehaj Punit Singh
+ * This class creates the transpose for the board
+ */
+
+
 package CommonCode;
-import java.lang.Character;
+
 
 public class Transpose {
     private BoardObject transposeBoard[][];
     private BoardObject origBoard[][];
 
+    /**
+     * This is the constructor for the transpose class
+     * @param board
+     */
     public Transpose(BoardObject board[][]) {
         origBoard = board;
-        System.out.println("this is board length"+ board.length);
     }
 
+    /**
+     * this function generates tranpose for the given board
+     * @return
+     */
     public BoardObject[][] transpose(){
         if(origBoard==null){
-            System.out.println("the board is null");
         }
 
         transposeBoard =  new BoardObject[origBoard.length][origBoard.length];
@@ -32,6 +44,9 @@ public class Transpose {
         return transposeBoard;
     }
 
+    /**
+     * this function prints the transposed board
+     */
     public void printBoard() {
         //System.out.println("this is transpose board");
 
