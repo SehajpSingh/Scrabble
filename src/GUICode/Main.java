@@ -209,6 +209,11 @@ public class Main extends Application {
                 humanMove();
             }
         }
+
+    }
+
+    private void cmpTurn(){
+        System.out.println("here in computer turn");
         if (!turnHuman) {
             turnHuman = true;
 
@@ -322,16 +327,25 @@ public class Main extends Application {
                 System.out.println("correct move by human on left+right");
                 updateBoard("sehaj");
                 turnHuman = false;
-                // reverse=false;
+                cmpTurn();
                 played = true;
+                updateTray();
+                refreshTray();
+                resetBookeping();
+
+
 
             }
 
             if ((sol1.length() > 1) && (read.dictEdit.isWord(sol1, read.getRoot()))) {
                 System.out.println("correct move by human on up+down");
+                //update board function
                 turnHuman = false;
-                //  reverse=false;
+                cmpTurn();
                 played = true;
+                updateTray();
+                refreshTray();
+                resetBookeping();
             }
 
             if (!played) {
@@ -711,6 +725,7 @@ public class Main extends Application {
                     resetBookeping();
                     firstMove = false;
                     turnHuman = false;
+                    cmpTurn();
                 } else {
                     wrongMove();
                     resetBookeping();
@@ -747,6 +762,7 @@ public class Main extends Application {
                         resetBookeping();
                         firstMove = false;
                         turnHuman = false;
+                        cmpTurn();
 
                     } else {
                         wrongMove();
