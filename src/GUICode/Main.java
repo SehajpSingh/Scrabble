@@ -73,10 +73,12 @@ public class Main extends Application {
     protected BoardObject[][] origBoard;
     protected BoardObject[][] tempBoard;
 
+
     private int anchorRow;
     private int anchorCol;
     private int startRow;
     private int startCol;
+    private int compScore = 0;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -174,8 +176,8 @@ public class Main extends Application {
             ifClear();
             refreshTray();
         } else if (event.getSource() == Swap) {
-            if(turnHuman){
-                turnHuman=false;
+            if (turnHuman) {
+                turnHuman = false;
                 swap = true;
             }
 
@@ -228,7 +230,7 @@ public class Main extends Application {
             trans = new Transpose(boards.board);
             transBoard = new BoardObject[boards.boardSize][boards.boardSize];
             transBoard = trans.transpose();
-            origBoard=boards.board;
+            origBoard = boards.board;
             boards.board = transBoard;
             logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             logic1.ankerPoints();
@@ -258,6 +260,8 @@ public class Main extends Application {
                 updateGui();
                 System.out.println("normal board after update");
                 logic.printBoard1();
+                compScore += bestSocre;
+                comScor.setText("Computer Score: " + compScore);
                 updateCompStr(cmp, logic.getBestStr());
 
                 //System.out.println("no transpose");
@@ -278,6 +282,8 @@ public class Main extends Application {
                 boards.board = trans.transpose();
                 System.out.println("updated transpose board");
                 logic1.printBoard();
+                compScore = bestSocre1;
+                comScor.setText("Computer Score: " + compScore);
                 updateGui();
                 updateCompStr(cmp, logic1.getBestStr());
             }
@@ -300,44 +306,39 @@ public class Main extends Application {
             resetBookeping();
         }
 
-        if (Row.size() > 1 && !ifConnected()) {
-            wrongMove();
-            resetBookeping();
-            //System.out.println("they are not connected");
-        }
+        // if (Row.size() > 1 && !ifConnected()) {
+        // wrongMove();
+        // resetBookeping();
+        //System.out.println("they are not connected");
+        //}
         // check if rows and cols are connected
         else {
-           // System.out.println("the are connected");
-           // System.out.println("best Row: " + anchorRow);
-          //  System.out.println("anchors col: " + anchorCol);
+
+            boolean played = true;
             String sol = leftString();
             String sol1 = upString();
 
-           if((sol.length()>0) && (read.dictEdit.isWord(sol, read.getRoot()))){
-               System.out.println("correct move by human");
-               updateBoard("sehaj");
-               turnHuman=false;
+            if ((sol.length() > 1) && (read.dictEdit.isWord(sol, read.getRoot()))) {
+                System.out.println("correct move by human on left+right");
+                updateBoard("sehaj");
+                turnHuman = false;
+                // reverse=false;
+                played = true;
 
-            }else{
-               System.out.println("wrong move by human");
-               wrongMove();
-               resetBookeping();
-           }
+            }
 
-           if((sol1.length()>0) && (read.dictEdit.isWord(sol1, read.getRoot()))){
-               System.out.println("correct move by human");
-            turnHuman=false;
-            }else{
-               System.out.println("wrong move by human");
-               wrongMove();
-               resetBookeping();
-           }
+            if ((sol1.length() > 1) && (read.dictEdit.isWord(sol1, read.getRoot()))) {
+                System.out.println("correct move by human on up+down");
+                turnHuman = false;
+                //  reverse=false;
+                played = true;
+            }
 
-
-
-            //if (read.dictEdit.isWord(sol1, read.getRoot())) {
-            //    System.out.println("the word is correct:" + sol1);
-            //}
+            if (!played) {
+                reverseTempBoard();
+                wrongMove();
+                resetBookeping();
+            }
 
         }
 
@@ -424,7 +425,7 @@ public class Main extends Application {
     private String leftString() {
         tempBoard = boards.board;
         updateTempBoard();
-       // System.out.println("temp board after printing");
+        // System.out.println("temp board after printing");
         logic.printBoard2(tempBoard);
 
         boolean run = true;
@@ -432,26 +433,26 @@ public class Main extends Application {
         int col = anchorCol;
         String temp = "";
 
-        boolean start=false;
+        boolean start = false;
         int startR;
         int startC;
 
         while (run) {
-          //  System.out.println("inside the left loop");
-           // System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
+            //  System.out.println("inside the left loop");
+            // System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
 
             System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
 
             if ((col > 0 && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
-                startRow=anchorRow;
-                startCol=col;
-                startR=anchorRow;
-                startC=col;
-                start=true;
+                startRow = anchorRow;
+                startCol = col;
+                startR = anchorRow;
+                startC = col;
+                start = true;
             }
 
             if (col > 0 && tempBoard[anchorRow][col].getLetter() != '0') {
-              //  System.out.println("inside left");
+                //  System.out.println("inside left");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col--;
             } else {
@@ -475,19 +476,19 @@ public class Main extends Application {
         }
 
         while (run1) {
-        //    System.out.println("inside the right loop");
+            //    System.out.println("inside the right loop");
             System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
 
             if ((col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
-                startRow=anchorRow;
-                startCol=col;
-                startR=anchorRow;
-                startC=col;
-                start=true;
+                startRow = anchorRow;
+                startCol = col;
+                startR = anchorRow;
+                startC = col;
+                start = true;
             }
 
             if (col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') {
-           //     System.out.println("inside right");
+                //     System.out.println("inside right");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col++;
             } else {
@@ -504,7 +505,7 @@ public class Main extends Application {
         int row = anchorRow;
         String temp = "";
 
-        boolean start=false;
+        boolean start = false;
         int startR;
         int startC;
 
@@ -515,15 +516,15 @@ public class Main extends Application {
             System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
 
             if ((row > 0 && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
-                startRow=row;
-                startCol=anchorCol;
-                startR=row;
-                startC=anchorCol;
-                start=true;
+                startRow = row;
+                startCol = anchorCol;
+                startR = row;
+                startC = anchorCol;
+                start = true;
             }
 
             if (row > 0 && tempBoard[row][anchorCol].getLetter() != '0') {
-               // System.out.println("inside up");
+                // System.out.println("inside up");
                 temp += tempBoard[row][anchorCol].getLetter();
                 row--;
             } else {
@@ -548,19 +549,19 @@ public class Main extends Application {
 
 
         while (run1) {
-           // System.out.println("inside the bottom loop");
+            // System.out.println("inside the bottom loop");
             System.out.println(tempBoard[row][anchorCol].getLetter() != '0');
 
             if ((row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') && !start) {
-                startRow=row;
-                startCol=anchorCol;
-                startR=row;
-                startC=anchorCol;
-                start=true;
+                startRow = row;
+                startCol = anchorCol;
+                startR = row;
+                startC = anchorCol;
+                start = true;
             }
 
             if (row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') {
-             //   System.out.println("inside bottom");
+                //   System.out.println("inside bottom");
                 temp += tempBoard[row][anchorCol].getLetter();
                 row++;
             } else {
@@ -582,14 +583,26 @@ public class Main extends Application {
         }
     }
 
+    private void reverseTempBoard() {
+
+        for (int i = 0; i < Row.size(); i++) {
+            int row = Row.get(i);
+            int col = Col.get(i);
+            tempBoard[row][col].setLetter('0');
+            tempBoard[row][col].setPlayed(false);
+        }
+    }
+
     private boolean anchorsCheck() {
         ArrayList<Integer> ankerRow = new ArrayList<>();
         ArrayList<Integer> ankeraCol = new ArrayList<>();
+        ReadFile red = read;
+        CreateGUIBoard crea = boards;
         String temp = "";
         for (char c : tray) {
             temp += c;
         }
-        GUILogic logic12 = new GUILogic(read.dictEdit, boards, tile, read, temp);
+        GUILogic logic12 = new GUILogic(red.dictEdit, crea, tile, red, temp);
         logic12.ankerPoints();
 
         int b = 0;
@@ -1118,7 +1131,7 @@ public class Main extends Application {
         humScor.setLayoutY(120);
 
 
-        comScor.setText("Computer Score: " + computerScore);
+        comScor.setText("Computer Score: " + compScore);
         comScor.setTextFill(Color.YELLOW);
         comScor.setLayoutX(1220);
         comScor.setLayoutY(140);
