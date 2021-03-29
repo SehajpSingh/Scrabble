@@ -184,6 +184,7 @@ public class Main extends Application {
         } else if (event.getSource() == ok) {
             swap = false;
             tradeTiles();
+            cmpTurn();
         }
     }
 
@@ -329,6 +330,7 @@ public class Main extends Application {
                 turnHuman = false;
                 cmpTurn();
                 played = true;
+                humanScore(sol);
                 updateTray();
                 refreshTray();
                 resetBookeping();
@@ -343,6 +345,7 @@ public class Main extends Application {
                 updateBoard("sehaj");
                 turnHuman = false;
                 cmpTurn();
+                humanScore(sol1);
                 played = true;
                 updateTray();
                 refreshTray();
@@ -360,6 +363,23 @@ public class Main extends Application {
 
 
     }
+
+    private void humanScore(String str){
+        System.out.println("human score called");
+        int score=0;
+        if(str.length()==7){
+            score+=50;
+        }
+        for(int i = 0; i < str.length(); i++){
+            char c = str.charAt(i);
+            int ind = c-'a';
+            score+= tile.tile[ind].getMultiplier();
+        }
+
+        humScor.setText("Human Score: " + score);
+
+    }
+
 
     private boolean ifConnected() {
 
@@ -725,6 +745,7 @@ public class Main extends Application {
                     updateTray();
                     refreshTray();
                     resetBookeping();
+                    humanScore(str);
                     firstMove = false;
                     turnHuman = false;
                     cmpTurn();
@@ -758,6 +779,7 @@ public class Main extends Application {
 
                     if (read.dictEdit.isWord(str1, read.getRoot())) {
                         updateBoard(str1);
+                        humanScore(str1);
                         updateGui();
                         updateTray();
                         refreshTray();
@@ -1143,7 +1165,7 @@ public class Main extends Application {
         label.setLayoutX(1250);
         label.setLayoutY(100);
 
-        humScor.setText("Human Score: " + humanScore);
+        humScor.setText("Human Score: " + 0);
         humScor.setTextFill(Color.YELLOW);
         humScor.setLayoutX(1220);
         humScor.setLayoutY(120);
