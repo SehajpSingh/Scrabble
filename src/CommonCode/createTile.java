@@ -5,8 +5,7 @@
  */
 
 package CommonCode;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -30,7 +29,9 @@ public class createTile {
      */
     public void tiles() throws FileNotFoundException {
         int tileIndex = 0;
-        File file = new File("./resources/tiles.txt");
+        //File file = new File("./resources/tiles.txt");
+        InputStream file = getClass().getClassLoader().getResourceAsStream("tiles.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file));
         Scanner scnr = new Scanner(file);
         int lineNumber = 1;
 

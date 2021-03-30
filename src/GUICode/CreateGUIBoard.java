@@ -6,11 +6,14 @@ package GUICode;
 import CommonCode.BoardObject;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class CreateGUIBoard {
 
-    File file = new File("./resources/board.txt");
+    InputStream file = getClass().getClassLoader().getResourceAsStream("board.txt");
+
+    //File file = new File("./resources/board.txt");
     Scanner scnr = new Scanner(file);
     String line = scnr.nextLine();
     String[] arr = line.split(" ");

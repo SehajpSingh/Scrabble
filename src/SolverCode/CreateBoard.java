@@ -7,8 +7,7 @@ package SolverCode;
 import CommonCode.BoardObject;
 import CommonCode.Transpose;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -36,7 +35,10 @@ public class CreateBoard {
 
         int lines;
         int boardSize;
-        File file = new File("./resources/table.txt");
+        InputStream file = getClass().getClassLoader().getResourceAsStream("table.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file));
+
+        //File file = new File("./resources/table.txt");
         Scanner scnr = new Scanner(file);
         String line;
 
