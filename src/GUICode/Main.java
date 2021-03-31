@@ -4,7 +4,6 @@
  */
 
 package GUICode;
-
 import CommonCode.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -17,10 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -70,8 +67,6 @@ public class Main extends Application {
     private int startRow;
     private int startCol;
     private int compScore = 0;
-    private boolean horizontal;
-    private boolean vertical;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -173,6 +168,8 @@ public class Main extends Application {
         if (event.getSource() == Play) {
             ifPlay();
         } else if (event.getSource() == Pass) {
+            turnHuman=false;
+            cmpTurn();
             //System.out.println("singh is king");
         } else if (event.getSource() == Clear) {
             ifClear();
@@ -215,8 +212,8 @@ public class Main extends Application {
 
     }
 
-    private void cmpTurn() {
-        // System.out.println("here in computer turn");
+    private void cmpTurn(){
+         System.out.println("here in computer turn");
         if (!turnHuman) {
             turnHuman = true;
 
@@ -300,30 +297,30 @@ public class Main extends Application {
         if (!anchorsCheck()) {
             wrongMove();
             resetBookeping();
-        } else {
+        }
+
+        else {
 
             boolean played = false;
             String sol = leftString();
             String sol1 = upString();
 
             if ((sol.length() > 1) && (read.dictEdit.isWord(sol, read.getRoot()))) {
-                // updateBoard("sehaj");
-                horizontal = true;
+                updateBoard("sehaj");
                 turnHuman = false;
+                cmpTurn();
                 played = true;
                 humanScore(sol);
                 updateTray();
                 refreshTray();
                 resetBookeping();
-                cmpTurn();
+
 
 
             }
 
             if ((sol1.length() > 1) && (read.dictEdit.isWord(sol1, read.getRoot()))) {
-               // updateBoard("sehaj");
-
-                vertical = true;
+                updateBoard("sehaj");
                 turnHuman = false;
                 cmpTurn();
                 humanScore(sol1);
@@ -338,19 +335,15 @@ public class Main extends Application {
                 wrongMove();
                 resetBookeping();
             }
-            horizontal = false;
-            vertical = false;
 
         }
 
 
     }
 
-    private void vertMove(){
-
-    }
-
     private void humanScore(String str) {
+        System.out.println("this is row size: "+Row.size());
+        System.out.println("this is col size: "+Col.size());
         //get row and column of board then we can check if it needs to be added
         //also if the move is horizontal or vertical
         //
@@ -478,6 +471,10 @@ public class Main extends Application {
         int startC;
 
         while (run) {
+            //  System.out.println("inside the left loop");
+            // System.out.println("this is where we start: row : " + anchorRow + " col: " + col);
+
+            // System.out.println(tempBoard[anchorRow][col].getLetter() != '0');
 
             if ((col > 0 && tempBoard[anchorRow][col].getLetter() != '0') && !start) {
                 startRow = anchorRow;
@@ -531,7 +528,7 @@ public class Main extends Application {
                 run1 = false;
             }
         }
-        System.out.println("this is the left+right string: " + temp);
+        //System.out.println("this is the left+right string: " + temp);
         return temp;
     }
 
@@ -604,7 +601,7 @@ public class Main extends Application {
                 run1 = false;
             }
         }
-        System.out.println("this is the up string complete: " + temp);
+        // System.out.println("this is the up string complete: " + temp);
         return temp;
 
     }
@@ -742,16 +739,14 @@ public class Main extends Application {
                 if (read.dictEdit.isWord(str, read.getRoot())) {
                     updateBoard(str);
                     updateGui();
-                    humanScore(str);
                     updateTray();
+                    humanScore(str);
                     refreshTray();
                     resetBookeping();
                     firstMove = false;
                     turnHuman = false;
                     cmpTurn();
                 } else {
-                    System.out.println("wrong move but string is:" + str);
-                    System.out.println("is it valid: " + read.dictEdit.isWord(str, read.getRoot()));
                     wrongMove();
                     resetBookeping();
                 }
@@ -768,8 +763,6 @@ public class Main extends Application {
                     test1 = true;
 
                 } else {
-                    System.out.println("wrong move but string is: " + str1);
-                    System.out.println("is it valid" + read.dictEdit.isWord(str1, read.getRoot()));
                     test1 = false;
                     wrongMove();
                     resetBookeping();
@@ -818,6 +811,10 @@ public class Main extends Application {
     }
 
     private void updateBoard(String str) {
+        //row, col, and this move
+        //loop for the size of row
+        // pick up first row, col and add the new value at those indices
+        //create a universal print function that updates the values for all of theme everytime its called
 
         for (int i = 0; i < Row.size(); i++) {
             int row = Row.get(i);
@@ -829,7 +826,7 @@ public class Main extends Application {
     }
 
     private void updateGui() {
-
+        //System.out.println("update gui called");
         for (int i = 0; i < boards.boardSize; i++) {
             for (int j = 0; j < boards.boardSize; j++) {
 
@@ -841,6 +838,8 @@ public class Main extends Application {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
                 } else if (boards.board[i][j].getWordMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getWordMult()));
+                } else  if (boards.board[i][j].getLetter() == '0') {
+                    labels[i][j].setText("");
                 }
             }
         }
@@ -970,6 +969,8 @@ public class Main extends Application {
                             usedIndices.add(usedIndices.size(), tileClickedNum);
                             Row.add(Row.size(), x);
                             Col.add(Col.size(), y);
+                            System.out.println("the Row size: "+Row.size());
+                            System.out.println("this is col size: "+Col.size());
                         }
                     }
                 });
@@ -977,7 +978,8 @@ public class Main extends Application {
                 if (boards.board[i][j].getLetterMult() == 0 && boards.board[i][j].getWordMult() == 0) {
                     rectangle.setFill(Color.RED);
                     name1 = new Label();
-                    String name2 = String.valueOf(0);
+                    //String name2 = String.valueOf(0);
+                    String name2 ="";
                     name1.setText(name2);
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
@@ -1141,6 +1143,8 @@ public class Main extends Application {
     }
 
     private void scoreBoard() {
+        int humanScore = 50;
+        int computerScore = 100;
         scoreBoard = new Rectangle();
         humScor = new Label();
         comScor = new Label();
@@ -1172,4 +1176,3 @@ public class Main extends Application {
     }
 
 }
-
