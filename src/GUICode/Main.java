@@ -197,7 +197,9 @@ public class Main extends Application {
                 if (Row.contains(half) && Col.contains(half)) {
                     getString();
                 } else {
-                    ifClear();
+                   // ifClear();
+                    wrongMove();
+                    resetBookeping();
                 }
 
             } else {
@@ -838,12 +840,11 @@ public class Main extends Application {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getLetterMult()));
                 } else if (boards.board[i][j].getWordMult() != 0) {
                     labels[i][j].setText(String.valueOf(boards.board[i][j].getWordMult()));
-                } else  if (boards.board[i][j].getLetter() == '0') {
-                    labels[i][j].setText("");
                 }
             }
         }
     }
+
 
     private void createCompTray() {
         for (int i = 0; i < 7; i++) {
