@@ -21,13 +21,13 @@ public class ReadFile {
      */
     public void readFile(File file) throws FileNotFoundException {
 
-        //File file = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
-        Scanner scnr = new Scanner(file);
+        File files = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
+        Scanner scnr = new Scanner(files);
 
         int lineNumber = 1;
         while (scnr.hasNextLine()) {
             String line = scnr.nextLine();
-
+           // System.out.println("these are the words added: "+line);
             dictEdit.addWords(line, root);
             lineNumber++;
 
