@@ -44,6 +44,10 @@ first click swap button then click of button to swap the tiles.
 The wild card may show up in the human tray but it is not handled in the gui program 
 so it may create errors
 
+sometimes computer takes it turn but does not show on board because the algorith returns same word as last time so there is nothing to update
+on board. this happens once a while.  Its after computer takes vertical move and most likey I have messed up refrences to the objects 
+around line 245 of main in the gui. 
+
 There may be other errors that I have not come across but they might exist.
 
 

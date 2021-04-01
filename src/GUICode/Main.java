@@ -77,6 +77,7 @@ public class Main extends Application {
     private int verRow;
     private int humanScore;
     private String lastString = "";
+    String cmp;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -213,11 +214,6 @@ public class Main extends Application {
                 }
 
             } else {
-                //first get the input such as the strings and stuff
-                //calculate new anchor points
-                //check if tile is placed on any of the anchors
-                //if so then
-                //System.out.println("second human turn");
                 humanMove();
             }
         }
@@ -229,14 +225,15 @@ public class Main extends Application {
         if (!turnHuman) {
             turnHuman = true;
 
-            String cmp = "";
+            cmp = "";
             for (char s : cmpTray) {
                 cmp += s;
             }
             System.out.println("this is computer tray: " + cmp);
+
             logic = new GUILogic(read.dictEdit, boards, tile, read, cmp);
-            System.out.println("orignal board");
-            logic.printBoard();
+            // System.out.println("orignal board");
+            //logic.printBoard();
             logic.ankerPoints();
             logic.storeCrossChecks();
             logic.findPrefixfromTray();
@@ -245,15 +242,18 @@ public class Main extends Application {
             int bestSocre = logic.getBestScore();
             String bestString = logic.getBestStr();
 
-
+            System.out.println("refrence of boards.board"+ boards.board);
             trans = new Transpose(boards.board);
             transBoard = new BoardObject[boards.boardSize][boards.boardSize];
             transBoard = trans.transpose();
+            System.out.println("refrence of transboard: "+transBoard);
             origBoard = boards.board;
+            System.out.println("orig board refrence");
             boards.board = transBoard;
+            System.out.println("boards.board refrence: "+boards.board);
             logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
-            System.out.println("orignal board");
-            logic1.printBoard();
+            //System.out.println("orignal board");
+            //logic1.printBoard();
             logic1.ankerPoints();
             logic1.storeCrossChecks();
             logic1.findPrefixfromTray();
@@ -263,65 +263,93 @@ public class Main extends Application {
             int bestSocre1 = logic1.getBestScore();
             String bestString1 = logic1.getBestStr();
 
-            if (bestSocre >= bestSocre1) {
-               // System.out.println("using normal board");
-                //System.out.println("this is best without transpose Score: " + bestSocre);
-               // System.out.println("this is best without transpose String: " + bestString);
-               // System.out.println("this is best row: " + logic.bestRow + " best col: " + logic.bestCol);
-                boards.board = origBoard;
-                logic.printBoard();
-                int r = logic.bestRow;
-                int c = logic.bestCol;
-
-                for (int l = 0; l < bestString.length(); l++) {
-                    boards.board[r][c].setLetter(bestString.charAt(l));
-                    boards.board[r][c].setPlayed(true);
-                    c++;
-                }
-                updateGui();
-                logic.printBoard1();
-                compScore += bestSocre;
-                comScor.setText("Computer Score: " + compScore);
-                lastString = bestString;
-                updateCompStr(cmp, logic.getBestStr());
-
-                //System.out.println("no transpose");
-
+            if (logic.bestScore >= logic1.bestScore) {
+                strComparison(logic.bestStr);
             } else {
-                //System.out.println("using transpose board");
-               // System.out.println("this is best score transpose : " + bestSocre1);
-               // System.out.println("this is best string transpose : " + bestString1);
-               // System.out.println("this is best row: " + logic1.bestRow + " best col: " + logic1.bestCol);
-
-                int r1 = logic1.bestRow;
-                int c1 = logic1.bestCol;
-                logic1.printBoard();
-                for (int l = 0; l < bestString1.length(); l++) {
-                    transBoard[r1][c1].setLetter(bestString1.charAt(l));
-                    transBoard[r1][c1].setPlayed(true);
-                    c1++;
-                }
-                lastString = bestString1;
-                BoardObject tempBoard[][] = transBoard;
-                Transpose trans = new Transpose(tempBoard);
-                boards.board = trans.transpose();
-                logic1.printBoard();
-                compScore += bestSocre1;
-                comScor.setText("Computer Score: " + compScore);
-                updateGui();
-                updateCompStr(cmp, logic1.getBestStr());
-
-
+                strComparison(logic1.bestStr);
             }
         }
     }
 
     private void strComparison(String best) {
-        if (lastString.equals(best)) {
+        //Random rand = new Random();
+        /**  if (lastString.equals(best)) {
+            for (int i = 0; i < 7; i++) {
+                boolean exchanged = false;
 
-        }else{
+                while (!exchanged) {
+                    int rand_int1 = rand.nextInt(27);
+                    if (tile.tile[rand_int1].withdrawLetter()) {
+                        exchanged = true;
+                        cmpTray[i] = tile.tile[rand_int1].getLetter();
+                        //System.out.println("letter before exchange " + tile.tray.get(val));
+                        //tile.tray.set(val, tile.tile[rand_int1].getLetter());
+                        //tileLetter.get(val).setText(String.valueOf(tile.tile[rand_int1].getLetter()));
+                        //System.out.println("letter after exchange " + tile.tray.get(val));
+                    }
+                }
 
-        }
+            }
+
+            cmpTurn();
+
+        } **/
+
+            if (logic.bestScore >= logic1.bestScore) {
+                System.out.println("using normal board for this move");
+                System.out.println("this is best without transpose Score: " + logic.bestScore);
+                System.out.println("this is best without transpose String: " + logic.getBestStr());
+                System.out.println("this is best row: " + logic.bestRow + " best col: " + logic.bestCol);
+                boards.board = origBoard;
+                logic.printBoard();
+                int r = logic.bestRow;
+                int c = logic.bestCol;
+
+                for (int l = 0; l < logic.getBestStr().length(); l++) {
+                    boards.board[r][c].setLetter(logic.getBestStr().charAt(l));
+                    boards.board[r][c].setPlayed(true);
+                    c++;
+                }
+                updateGui();
+                logic.printBoard1();
+                compScore += logic.bestScore;
+                comScor.setText("Computer Score: " + compScore);
+                lastString = logic.bestStr;
+                updateCompStr(cmp, logic.getBestStr());
+                logic.reset();
+                //System.out.println("no transpose");
+                //give new tray to computer and try again
+
+
+            } else {
+                System.out.println("using transpose board for this move");
+                System.out.println("this is best score transpose : " + logic1.bestScore);
+                System.out.println("this is best string transpose : " + logic1.bestStr);
+                System.out.println("this is best row: " + logic1.bestRow + " best col: " + logic1.bestCol);
+
+                int r1 = logic1.bestRow;
+                int c1 = logic1.bestCol;
+                logic1.printBoard();
+                for (int l = 0; l < logic1.bestStr.length(); l++) {
+                    transBoard[r1][c1].setLetter(logic1.bestStr.charAt(l));
+                    transBoard[r1][c1].setPlayed(true);
+                    c1++;
+                }
+                lastString = logic1.bestStr;
+                BoardObject tempBoard[][] = transBoard;
+                Transpose trans1 = new Transpose(tempBoard);
+                System.out.println("trans1 refrence: "+trans1);
+                boards.board = trans1.transpose();
+                System.out.println("boards.board refrence: "+boards.board);
+                logic1.printBoard();
+                compScore += logic1.bestScore;
+                comScor.setText("Computer Score: " + compScore);
+                updateGui();
+                updateCompStr(cmp, logic1.getBestStr());
+                logic1.reset();
+
+            }
+
     }
 
     private void humanMove() {

@@ -76,6 +76,22 @@ public class GUILogic {
         //printBoard();
     }
 
+    public void reset(){
+        prefixes.clear();
+        allPrefix.clear();
+        suffixFromBoardTray.clear();
+        suffixFromTray.clear();
+        wordBoardTray.clear();
+        ankers.clear();
+        bestStr="";
+        bestScore=-1;
+        bestRow=0;
+        bestCol=0;
+        leftOver="";
+        countWild=0;
+    }
+
+
     /**
      * prints the board
      */
