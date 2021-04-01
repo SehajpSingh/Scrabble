@@ -4,7 +4,9 @@
  * It generates the best possible move for the computer and calculates the score.
  */
 package GUICode;
+
 import CommonCode.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,16 +30,17 @@ public class GUILogic {
     protected int BestCol;
     protected int BestRow;
     private int countWild = 0;
-    private int bestScore = -1;
+    public int bestScore = -1;
     public int bestRow = 2;
     public int bestCol = 8;
     private char fWild;
     private char sWild;
-    private String bestStr = "";
+    public String bestStr = "";
     private String leftOver = "";
 
     /**
      * getter for the best string
+     *
      * @return returns the best string
      */
     public String getBestStr() {
@@ -46,6 +49,7 @@ public class GUILogic {
 
     /**
      * getter for the best score
+     *
      * @return returns the best score
      */
     public int getBestScore() {
@@ -54,6 +58,7 @@ public class GUILogic {
 
     /**
      * the constructor for the logic and takes the essential parameters
+     *
      * @param dictionaryEdit
      * @param createBoard
      * @param tile
@@ -83,7 +88,9 @@ public class GUILogic {
                 int wordMul = createBoard.board[i][j].getWordMult();
                 int letterMult = createBoard.board[i][j].getLetterMult();
 
-                if (wordMul == 0 && letterMult == 0) {
+                if (letter != '0') {
+                    System.out.print(" " + letter + " ");
+                } else if (wordMul == 0 && letterMult == 0) {
                     if (letter != '0') {
                         System.out.print(" " + letter + " ");
                     } else {
@@ -315,6 +322,7 @@ public class GUILogic {
 
     /**
      * generates the combinations for the prefix
+     *
      * @param prefix
      * @param s
      * @param hashSet
@@ -329,6 +337,7 @@ public class GUILogic {
 
     /**
      * generates the premutations for the prefix
+     *
      * @param prefix
      * @param s
      */
@@ -477,6 +486,7 @@ public class GUILogic {
 
     /**
      * calculates the score for board
+     *
      * @param row
      * @param col
      * @param str
@@ -634,7 +644,7 @@ public class GUILogic {
             bestCol = col;
             bestRow = row;
             bestStr = str;
-             //System.out.println("best score: " + bestScore + " bestRow: " + bestRow + " bestCol: " + bestCol + " bestStr " + bestStr);
+            //System.out.println("best score: " + bestScore + " bestRow: " + bestRow + " bestCol: " + bestCol + " bestStr " + bestStr);
 
         }
         return totalScore;
@@ -642,6 +652,7 @@ public class GUILogic {
 
     /**
      * genereates the premuations
+     *
      * @param row
      * @param col
      * @param prefix
@@ -672,6 +683,7 @@ public class GUILogic {
 
     /**
      * generates the permutations
+     *
      * @param row
      * @param col
      * @param prefix

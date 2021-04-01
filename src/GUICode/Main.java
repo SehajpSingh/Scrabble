@@ -4,6 +4,7 @@
  */
 
 package GUICode;
+
 import CommonCode.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -67,6 +69,14 @@ public class Main extends Application {
     private int startRow;
     private int startCol;
     private int compScore = 0;
+    private boolean hor;
+    private boolean vert;
+    private int horCol;
+    private int horRow;
+    private int verCol;
+    private int verRow;
+    private int humanScore;
+    private String lastString;
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -168,7 +178,7 @@ public class Main extends Application {
         if (event.getSource() == Play) {
             ifPlay();
         } else if (event.getSource() == Pass) {
-            turnHuman=false;
+            turnHuman = false;
             cmpTurn();
             //System.out.println("singh is king");
         } else if (event.getSource() == Clear) {
@@ -197,7 +207,7 @@ public class Main extends Application {
                 if (Row.contains(half) && Col.contains(half)) {
                     getString();
                 } else {
-                   // ifClear();
+                    // ifClear();
                     wrongMove();
                     resetBookeping();
                 }
@@ -214,8 +224,8 @@ public class Main extends Application {
 
     }
 
-    private void cmpTurn(){
-         System.out.println("here in computer turn");
+    private void cmpTurn() {
+        System.out.println("here in computer turn");
         if (!turnHuman) {
             turnHuman = true;
 
@@ -223,8 +233,10 @@ public class Main extends Application {
             for (char s : cmpTray) {
                 cmp += s;
             }
-
+            System.out.println("this is computer tray: "+cmp);
             logic = new GUILogic(read.dictEdit, boards, tile, read, cmp);
+            System.out.println("orignal board");
+            logic.printBoard();
             logic.ankerPoints();
             logic.storeCrossChecks();
             logic.findPrefixfromTray();
@@ -240,19 +252,22 @@ public class Main extends Application {
             origBoard = boards.board;
             boards.board = transBoard;
             logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
+            System.out.println("orignal board");
+            logic1.printBoard();
             logic1.ankerPoints();
             logic1.storeCrossChecks();
             logic1.findPrefixfromTray();
             logic1.getSuffixFromBoard();
             logic1.getPrefixFromBoard();
             //logic1.printBoard1();
-
             int bestSocre1 = logic1.getBestScore();
             String bestString1 = logic1.getBestStr();
-            // System.out.println("this is best score 1 : " + bestSocre1);
-            //System.out.println("this is best string 1 : " + bestString1);
 
             if (bestSocre >= bestSocre1) {
+                System.out.println("using normal board");
+                System.out.println("this is best without transpose Score: "+bestSocre);
+                System.out.println("this is best without transpose String: "+bestString);
+                System.out.println("this is best row: "+logic.bestRow+" best col: "+logic.bestCol);
                 boards.board = origBoard;
                 logic.printBoard();
                 int r = logic.bestRow;
@@ -272,7 +287,11 @@ public class Main extends Application {
                 //System.out.println("no transpose");
 
             } else {
-                //System.out.println("transpose board");
+                System.out.println("using transpose board");
+                System.out.println("this is best score transpose : " + bestSocre1);
+                System.out.println("this is best string transpose : " + bestString1);
+                System.out.println("this is best row: "+logic1.bestRow+" best col: "+logic1.bestCol);
+
                 int r1 = logic1.bestRow;
                 int c1 = logic1.bestCol;
                 logic1.printBoard();
@@ -285,10 +304,20 @@ public class Main extends Application {
                 Transpose trans = new Transpose(tempBoard);
                 boards.board = trans.transpose();
                 logic1.printBoard();
-                compScore = bestSocre1;
+                compScore += bestSocre1;
                 comScor.setText("Computer Score: " + compScore);
                 updateGui();
                 updateCompStr(cmp, logic1.getBestStr());
+
+                logic.bestCol=0;
+                logic.bestRow=0;
+                logic.bestStr="";
+                logic.bestScore=-10;
+
+                logic1.bestCol=0;
+                logic1.bestRow=0;
+                logic1.bestStr="";
+                logic1.bestScore=-10;
             }
         }
     }
@@ -299,9 +328,7 @@ public class Main extends Application {
         if (!anchorsCheck()) {
             wrongMove();
             resetBookeping();
-        }
-
-        else {
+        } else {
 
             boolean played = false;
             String sol = leftString();
@@ -316,7 +343,6 @@ public class Main extends Application {
                 updateTray();
                 refreshTray();
                 resetBookeping();
-
 
 
             }
@@ -344,8 +370,82 @@ public class Main extends Application {
     }
 
     private void humanScore(String str) {
-        System.out.println("this is row size: "+Row.size());
-        System.out.println("this is col size: "+Col.size());
+        // System.out.println("this is horizontal status: "+hor);
+        // System.out.println("this is horizontal row: "+horRow);
+        // System.out.println("this is horizontal col:"+horCol);
+        // System.out.println("this is row size: " + Row.size());
+        // System.out.println("this is col size: " + Col.size());
+        //get row and column of board then we can check if it needs to be added
+        //also if the move is horizontal or vertical
+        //
+
+        if (hor) {
+            System.out.println("inside horizontal ");
+            int score = 0;
+            int row = horRow;
+            int col = horCol;
+            int worMult = 0;
+            if (str.length() == 7) {
+                score += 50;
+            }
+            for (int i = 0; i < str.length(); i++) {
+                int temp = 0;
+                col++;
+                char c = str.charAt(i);
+                int ind = c - 'a';
+                temp += tile.tile[ind].getMultiplier();
+
+                if (boards.board[row][col].getLetterMult() > 0) {
+                    score = score * boards.board[row][col].getLetterMult();
+                }
+                if (boards.board[row][col].getWordMult() > 0) {
+                    worMult = boards.board[row][col].getWordMult();
+                }
+                score += temp;
+            }
+            if (worMult > 0) {
+                score = score * worMult;
+            }
+            humanScore += score;
+            humScor.setText("Human Score: " + humanScore);
+        }
+
+
+        if (vert) {
+            System.out.println("inside horizontal ");
+            int score = 0;
+            int row = verRow;
+            int col = verCol;
+            int worMult = 0;
+            if (str.length() == 7) {
+                score += 50;
+            }
+            for (int i = 0; i < str.length(); i++) {
+                int temp = 0;
+                row++;
+                char c = str.charAt(i);
+                int ind = c - 'a';
+                temp += tile.tile[ind].getMultiplier();
+
+                if (boards.board[row][col].getLetterMult() > 0) {
+                    score = score * boards.board[row][col].getLetterMult();
+                }
+                if (boards.board[row][col].getWordMult() > 0) {
+                    worMult = boards.board[row][col].getWordMult();
+                }
+                score += temp;
+            }
+            if (worMult > 0) {
+                score = score * worMult;
+            }
+            humanScore += score;
+            humScor.setText("Human Score: " + humanScore);
+        }
+    }
+
+    private void firstHumanScore(String str) {
+        //  System.out.println("this is row size: " + Row.size());
+        //  System.out.println("this is col size: " + Col.size());
         //get row and column of board then we can check if it needs to be added
         //also if the move is horizontal or vertical
         //
@@ -375,7 +475,7 @@ public class Main extends Application {
         if (worMult > 0) {
             score = score * worMult;
         }
-
+        humanScore += score;
         humScor.setText("Human Score: " + score);
 
     }
@@ -458,6 +558,7 @@ public class Main extends Application {
     }
 
     private String leftString() {
+        hor = false;
         tempBoard = boards.board;
         updateTempBoard();
         // System.out.println("temp board after printing");
@@ -487,6 +588,9 @@ public class Main extends Application {
             }
 
             if (col > 0 && tempBoard[anchorRow][col].getLetter() != '0') {
+                hor = true;
+                horRow = anchorRow;
+                horCol = col;
                 //  System.out.println("inside left");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col--;
@@ -502,7 +606,7 @@ public class Main extends Application {
         }
 
         temp = ans;
-        // System.out.println("THIS IS LEFT STRING: " + temp);
+        System.out.println("THIS IS LEFT STRING: " + temp);
 
         if (temp.length() > 0) {
             col = anchorCol + 1;
@@ -523,6 +627,13 @@ public class Main extends Application {
             }
 
             if (col < tempBoard.length && tempBoard[anchorRow][col].getLetter() != '0') {
+                if (!hor) {
+                    hor = true;
+                    horRow = anchorRow;
+                    horCol = col;
+                }
+
+
                 //     System.out.println("inside right");
                 temp += tempBoard[anchorRow][col].getLetter();
                 col++;
@@ -530,11 +641,12 @@ public class Main extends Application {
                 run1 = false;
             }
         }
-        //System.out.println("this is the left+right string: " + temp);
+        System.out.println("this is the left+right string: " + temp);
         return temp;
     }
 
     private String upString() {
+        vert = false;
         boolean run = true;
         boolean run1 = true;
         int row = anchorRow;
@@ -559,6 +671,9 @@ public class Main extends Application {
             }
 
             if (row > 0 && tempBoard[row][anchorCol].getLetter() != '0') {
+                vert = true;
+                verRow = row;
+                verCol = anchorCol;
                 // System.out.println("inside up");
                 temp += tempBoard[row][anchorCol].getLetter();
                 row--;
@@ -597,6 +712,11 @@ public class Main extends Application {
 
             if (row < tempBoard.length && tempBoard[row][anchorCol].getLetter() != '0') {
                 //   System.out.println("inside bottom");
+                if (!vert) {
+                    verCol = anchorCol;
+                    verRow = row;
+                    vert = false;
+                }
                 temp += tempBoard[row][anchorCol].getLetter();
                 row++;
             } else {
@@ -742,7 +862,7 @@ public class Main extends Application {
                     updateBoard(str);
                     updateGui();
                     updateTray();
-                    humanScore(str);
+                    firstHumanScore(str);
                     refreshTray();
                     resetBookeping();
                     firstMove = false;
@@ -778,7 +898,7 @@ public class Main extends Application {
 
                     if (read.dictEdit.isWord(str1, read.getRoot())) {
                         updateBoard(str1);
-                        humanScore(str1);
+                        firstHumanScore(str1);
                         updateGui();
                         updateTray();
                         refreshTray();
@@ -844,7 +964,6 @@ public class Main extends Application {
             }
         }
     }
-
 
     private void createCompTray() {
         for (int i = 0; i < 7; i++) {
@@ -970,8 +1089,8 @@ public class Main extends Application {
                             usedIndices.add(usedIndices.size(), tileClickedNum);
                             Row.add(Row.size(), x);
                             Col.add(Col.size(), y);
-                            System.out.println("the Row size: "+Row.size());
-                            System.out.println("this is col size: "+Col.size());
+                            System.out.println("the Row size: " + Row.size());
+                            System.out.println("this is col size: " + Col.size());
                         }
                     }
                 });
@@ -980,7 +1099,7 @@ public class Main extends Application {
                     rectangle.setFill(Color.RED);
                     name1 = new Label();
                     //String name2 = String.valueOf(0);
-                    String name2 ="";
+                    String name2 = "";
                     name1.setText(name2);
                     name1.setTextFill(Color.YELLOW);
                     name1.setLayoutX(x + 20);
