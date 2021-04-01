@@ -80,6 +80,7 @@ public class GUILogic {
      * prints the board
      */
     public void printBoard() {
+        System.out.println("this is print board");
         int loop = createBoard.board.length;
         System.out.println();
         for (int i = 0; i < loop; i++) {
@@ -87,15 +88,15 @@ public class GUILogic {
                 char letter = createBoard.board[i][j].getLetter();
                 int wordMul = createBoard.board[i][j].getWordMult();
                 int letterMult = createBoard.board[i][j].getLetterMult();
+                boolean stat = createBoard.board[i][j].getPlayedStatus();
 
-                if (letter != '0') {
+                if (stat) {
                     System.out.print(" " + letter + " ");
                 } else if (wordMul == 0 && letterMult == 0) {
-                    if (letter != '0') {
-                        System.out.print(" " + letter + " ");
-                    } else {
-                        System.out.print(".. ");
-                    }
+                    //if (letter != '0') {
+                    //  System.out.print(" " + letter + " ");
+                    //  }
+                    System.out.print(".. ");
                 } else if (wordMul != 0) {
                     System.out.print(wordMul + "." + " ");
                 } else if (letterMult != 0) {

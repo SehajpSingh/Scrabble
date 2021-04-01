@@ -76,7 +76,7 @@ public class Main extends Application {
     private int verCol;
     private int verRow;
     private int humanScore;
-    private String lastString;
+    private String lastString = "";
 
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
@@ -233,7 +233,7 @@ public class Main extends Application {
             for (char s : cmpTray) {
                 cmp += s;
             }
-            System.out.println("this is computer tray: "+cmp);
+            System.out.println("this is computer tray: " + cmp);
             logic = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             System.out.println("orignal board");
             logic.printBoard();
@@ -264,10 +264,10 @@ public class Main extends Application {
             String bestString1 = logic1.getBestStr();
 
             if (bestSocre >= bestSocre1) {
-                System.out.println("using normal board");
-                System.out.println("this is best without transpose Score: "+bestSocre);
-                System.out.println("this is best without transpose String: "+bestString);
-                System.out.println("this is best row: "+logic.bestRow+" best col: "+logic.bestCol);
+               // System.out.println("using normal board");
+                //System.out.println("this is best without transpose Score: " + bestSocre);
+               // System.out.println("this is best without transpose String: " + bestString);
+               // System.out.println("this is best row: " + logic.bestRow + " best col: " + logic.bestCol);
                 boards.board = origBoard;
                 logic.printBoard();
                 int r = logic.bestRow;
@@ -282,15 +282,16 @@ public class Main extends Application {
                 logic.printBoard1();
                 compScore += bestSocre;
                 comScor.setText("Computer Score: " + compScore);
+                lastString = bestString;
                 updateCompStr(cmp, logic.getBestStr());
 
                 //System.out.println("no transpose");
 
             } else {
-                System.out.println("using transpose board");
-                System.out.println("this is best score transpose : " + bestSocre1);
-                System.out.println("this is best string transpose : " + bestString1);
-                System.out.println("this is best row: "+logic1.bestRow+" best col: "+logic1.bestCol);
+                //System.out.println("using transpose board");
+               // System.out.println("this is best score transpose : " + bestSocre1);
+               // System.out.println("this is best string transpose : " + bestString1);
+               // System.out.println("this is best row: " + logic1.bestRow + " best col: " + logic1.bestCol);
 
                 int r1 = logic1.bestRow;
                 int c1 = logic1.bestCol;
@@ -300,6 +301,7 @@ public class Main extends Application {
                     transBoard[r1][c1].setPlayed(true);
                     c1++;
                 }
+                lastString = bestString1;
                 BoardObject tempBoard[][] = transBoard;
                 Transpose trans = new Transpose(tempBoard);
                 boards.board = trans.transpose();
@@ -309,16 +311,16 @@ public class Main extends Application {
                 updateGui();
                 updateCompStr(cmp, logic1.getBestStr());
 
-                logic.bestCol=0;
-                logic.bestRow=0;
-                logic.bestStr="";
-                logic.bestScore=-10;
 
-                logic1.bestCol=0;
-                logic1.bestRow=0;
-                logic1.bestStr="";
-                logic1.bestScore=-10;
             }
+        }
+    }
+
+    private void strComparison(String best) {
+        if (lastString.equals(best)) {
+
+        }else{
+
         }
     }
 
