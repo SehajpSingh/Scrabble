@@ -21,7 +21,7 @@ value inside them, Grey tiles are letter multiplier with their value insdie them
 word mult or letter mult. 
 
 2. The first move has to be made by the human player and the computer player takes its after 
-the human player. Human player clicks on the tile in the tray first and the color or selcted
+the human player. Human player clicks on the tile in the tray first and the color or selected
 tile will change from red to grey, then click the tile on the board where tile has to be placed. 
 
 3. The tiles must be placed from left to right in order for ex: if i want to put "Gone" on the board 
@@ -47,6 +47,8 @@ so it may create errors
 sometimes computer takes it turn but does not show on board because the algorith returns same word as last time so there is nothing to update
 on board. this happens once a while.  Its after computer takes vertical move and most likey I have messed up refrences to the objects 
 around line 245 of main in the gui. 
+
+The program will not handle if someone has won or not. 
 
 There may be other errors that I have not come across but they might exist.
 
