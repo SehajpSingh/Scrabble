@@ -17,7 +17,7 @@ public class Transpose {
      */
     public Transpose(BoardObject board[][]) {
         origBoard = board;
-        System.out.println("refrence from transpose: "+origBoard);
+        //System.out.println("refrence from transpose: "+origBoard);
     }
 
     /**

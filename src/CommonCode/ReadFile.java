@@ -21,8 +21,8 @@ public class ReadFile {
      */
     public void readFile(File file) throws FileNotFoundException {
 
-        File files = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
-        Scanner scnr = new Scanner(files);
+        //File files = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
+        Scanner scnr = new Scanner(file);
 
         int lineNumber = 1;
         while (scnr.hasNextLine()) {

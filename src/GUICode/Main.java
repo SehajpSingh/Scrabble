@@ -82,24 +82,22 @@ public class Main extends Application {
     public static void main(String[] args) throws FileNotFoundException {
         read = new ReadFile();
         File file;
-        file = new File("/Users/sehajpunitsingh/Desktop/sowpods.txt");
-        //if (args.length == 0) {
-        //    System.out.println("no dictionary files are given: ");
-        //} else {
-        //file = new File args[0];
-        //file = new File(args[0]);
-        //  file = getClass().getClassLoader().getResourceAsStream("sowpods.txt");
-        //read.readFile(file);
-        read.readFile(file);
-        boards = new CreateGUIBoard();
-        boards.readBoard();
 
-        tile = new createTile();
-        tile.tiles();
-        tile.trays();
+        if (args.length == 0) {
+            System.out.println("no dictionary files are given: ");
+        } else {
+            file = new File(args[0]);
+            read.readFile(file);
+            read.readFile(file);
+            boards = new CreateGUIBoard();
+            boards.readBoard();
 
-        launch(args);
-        //}
+            tile = new createTile();
+            tile.tiles();
+            tile.trays();
+
+            launch(args);
+        }
     }
 
     public void start(Stage primaryStage) throws Exception {
@@ -115,7 +113,7 @@ public class Main extends Application {
         scoreBoard();
         layout.getChildren().addAll(Play, Pass, Swap, Clear, scoreBoard, humScor, label, comScor, ok);
 
-        //System.out.println("THIS IS THE SIZE: " + rects.size());
+
         for (int j = 0; j < rects.length; j++) {
             for (int k = 0; k < rects.length; k++) {
                 layout.getChildren().addAll(rects[j][k]);
@@ -221,7 +219,6 @@ public class Main extends Application {
     }
 
     private void cmpTurn() {
-        System.out.println("here in computer turn");
         if (!turnHuman) {
             turnHuman = true;
 
@@ -229,7 +226,7 @@ public class Main extends Application {
             for (char s : cmpTray) {
                 cmp += s;
             }
-            System.out.println("this is computer tray: " + cmp);
+
 
             logic = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             // System.out.println("orignal board");
@@ -242,15 +239,12 @@ public class Main extends Application {
             int bestSocre = logic.getBestScore();
             String bestString = logic.getBestStr();
 
-            System.out.println("refrence of boards.board"+ boards.board);
+
             trans = new Transpose(boards.board);
             transBoard = new BoardObject[boards.boardSize][boards.boardSize];
             transBoard = trans.transpose();
-            System.out.println("refrence of transboard: "+transBoard);
             origBoard = boards.board;
-            System.out.println("orig board refrence");
             boards.board = transBoard;
-            System.out.println("boards.board refrence: "+boards.board);
             logic1 = new GUILogic(read.dictEdit, boards, tile, read, cmp);
             //System.out.println("orignal board");
             //logic1.printBoard();
@@ -272,83 +266,60 @@ public class Main extends Application {
     }
 
     private void strComparison(String best) {
-        //Random rand = new Random();
-        /**  if (lastString.equals(best)) {
-            for (int i = 0; i < 7; i++) {
-                boolean exchanged = false;
+        if (logic.bestScore >= logic1.bestScore) {
+            System.out.println("using normal board for this move");
+            System.out.println("this is best without transpose Score: " + logic.bestScore);
+            System.out.println("this is best without transpose String: " + logic.getBestStr());
+            System.out.println("this is best row: " + logic.bestRow + " best col: " + logic.bestCol);
+            boards.board = origBoard;
+            logic.printBoard();
+            int r = logic.bestRow;
+            int c = logic.bestCol;
 
-                while (!exchanged) {
-                    int rand_int1 = rand.nextInt(27);
-                    if (tile.tile[rand_int1].withdrawLetter()) {
-                        exchanged = true;
-                        cmpTray[i] = tile.tile[rand_int1].getLetter();
-                        //System.out.println("letter before exchange " + tile.tray.get(val));
-                        //tile.tray.set(val, tile.tile[rand_int1].getLetter());
-                        //tileLetter.get(val).setText(String.valueOf(tile.tile[rand_int1].getLetter()));
-                        //System.out.println("letter after exchange " + tile.tray.get(val));
-                    }
-                }
-
+            for (int l = 0; l < logic.getBestStr().length(); l++) {
+                boards.board[r][c].setLetter(logic.getBestStr().charAt(l));
+                boards.board[r][c].setPlayed(true);
+                c++;
             }
-
-            cmpTurn();
-
-        } **/
-
-            if (logic.bestScore >= logic1.bestScore) {
-                System.out.println("using normal board for this move");
-                System.out.println("this is best without transpose Score: " + logic.bestScore);
-                System.out.println("this is best without transpose String: " + logic.getBestStr());
-                System.out.println("this is best row: " + logic.bestRow + " best col: " + logic.bestCol);
-                boards.board = origBoard;
-                logic.printBoard();
-                int r = logic.bestRow;
-                int c = logic.bestCol;
-
-                for (int l = 0; l < logic.getBestStr().length(); l++) {
-                    boards.board[r][c].setLetter(logic.getBestStr().charAt(l));
-                    boards.board[r][c].setPlayed(true);
-                    c++;
-                }
-                updateGui();
-                logic.printBoard1();
-                compScore += logic.bestScore;
-                comScor.setText("Computer Score: " + compScore);
-                lastString = logic.bestStr;
-                updateCompStr(cmp, logic.getBestStr());
-                logic.reset();
-                //System.out.println("no transpose");
-                //give new tray to computer and try again
+            updateGui();
+            logic.printBoard1();
+            compScore += logic.bestScore;
+            comScor.setText("Computer Score: " + compScore);
+            lastString = logic.bestStr;
+            updateCompStr(cmp, logic.getBestStr());
+            logic.reset();
+            //System.out.println("no transpose");
+            //give new tray to computer and try again
 
 
-            } else {
-                System.out.println("using transpose board for this move");
-                System.out.println("this is best score transpose : " + logic1.bestScore);
-                System.out.println("this is best string transpose : " + logic1.bestStr);
-                System.out.println("this is best row: " + logic1.bestRow + " best col: " + logic1.bestCol);
+        } else {
+            System.out.println("using transpose board for this move");
+            System.out.println("this is best score transpose : " + logic1.bestScore);
+            System.out.println("this is best string transpose : " + logic1.bestStr);
+            System.out.println("this is best row: " + logic1.bestRow + " best col: " + logic1.bestCol);
 
-                int r1 = logic1.bestRow;
-                int c1 = logic1.bestCol;
-                logic1.printBoard();
-                for (int l = 0; l < logic1.bestStr.length(); l++) {
-                    transBoard[r1][c1].setLetter(logic1.bestStr.charAt(l));
-                    transBoard[r1][c1].setPlayed(true);
-                    c1++;
-                }
-                lastString = logic1.bestStr;
-                BoardObject tempBoard[][] = transBoard;
-                Transpose trans1 = new Transpose(tempBoard);
-                System.out.println("trans1 refrence: "+trans1);
-                boards.board = trans1.transpose();
-                System.out.println("boards.board refrence: "+boards.board);
-                logic1.printBoard();
-                compScore += logic1.bestScore;
-                comScor.setText("Computer Score: " + compScore);
-                updateGui();
-                updateCompStr(cmp, logic1.getBestStr());
-                logic1.reset();
-
+            int r1 = logic1.bestRow;
+            int c1 = logic1.bestCol;
+            logic1.printBoard();
+            for (int l = 0; l < logic1.bestStr.length(); l++) {
+                transBoard[r1][c1].setLetter(logic1.bestStr.charAt(l));
+                transBoard[r1][c1].setPlayed(true);
+                c1++;
             }
+            lastString = logic1.bestStr;
+            BoardObject tempBoard[][] = transBoard;
+            Transpose trans1 = new Transpose(tempBoard);
+            System.out.println("trans1 refrence: " + trans1);
+            boards.board = trans1.transpose();
+            System.out.println("boards.board refrence: " + boards.board);
+            logic1.printBoard();
+            compScore += logic1.bestScore;
+            comScor.setText("Computer Score: " + compScore);
+            updateGui();
+            updateCompStr(cmp, logic1.getBestStr());
+            logic1.reset();
+
+        }
 
     }
 
@@ -400,17 +371,8 @@ public class Main extends Application {
     }
 
     private void humanScore(String str) {
-        // System.out.println("this is horizontal status: "+hor);
-        // System.out.println("this is horizontal row: "+horRow);
-        // System.out.println("this is horizontal col:"+horCol);
-        // System.out.println("this is row size: " + Row.size());
-        // System.out.println("this is col size: " + Col.size());
-        //get row and column of board then we can check if it needs to be added
-        //also if the move is horizontal or vertical
-        //
 
         if (hor) {
-            System.out.println("inside horizontal ");
             int score = 0;
             int row = horRow;
             int col = horCol;
@@ -442,7 +404,6 @@ public class Main extends Application {
 
 
         if (vert) {
-            System.out.println("inside horizontal ");
             int score = 0;
             int row = verRow;
             int col = verCol;
